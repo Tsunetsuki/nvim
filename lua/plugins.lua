@@ -91,9 +91,22 @@ return {
         "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release"
     },
     {
-        {'VonHeikemen/lsp-zero.nvim', branch = 'v4.x'},                                                   
-        {'neovim/nvim-lspconfig'},                                                                        
-        {'hrsh7th/cmp-nvim-lsp'},                                                                         
-        {'hrsh7th/nvim-cmp'},         
+        { 'VonHeikemen/lsp-zero.nvim', branch = 'v4.x' },
+        { 'neovim/nvim-lspconfig' },
+        { 'hrsh7th/cmp-nvim-lsp' },
+        { 'hrsh7th/nvim-cmp' },
+    },
+    {
+        "NMAC427/guess-indent.nvim",
+        config = function()
+            require('guess-indent').setup {}
+        end,
+    },
+    {
+        "m4xshen/autoclose.nvim",
+        config = function()
+            require("autoclose").setup()
+        end,
+    },
     }
 }
