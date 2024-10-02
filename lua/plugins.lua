@@ -1,10 +1,4 @@
 return {
-    --    {
-    --        "rebelot/kanagawa.nvim",
-    --        config = function()
-    --            vim.cmd.colorscheme("kanagawa-wave")
-    --        end,
-    --    },
     {
         "askfiy/visual_studio_code",
         priority = 100,
@@ -150,7 +144,6 @@ return {
             null_ls.setup({
                 sources = {
                     --null_ls.builtins.formatting.stylua,
-                    null_ls.builtins.completion.spell,
                     --require("none-ls.diagnostics.eslint"), -- requires none-ls-extras.nvim
                     null_ls.builtins.formatting.black
                 },

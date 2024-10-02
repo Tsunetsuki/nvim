@@ -25,6 +25,7 @@ end
 lsp_zero.extend_lspconfig({
     sign_text = true,
     lsp_attach = lsp_attach,
+    capabilities = require('cmp_nvim_lsp').default_capabilities()
 })
 
 require("mason-lspconfig").setup({
@@ -37,7 +38,6 @@ require("mason-lspconfig").setup_handlers({
 })
 
 
-
 ---
 -- Autocompletion setup
 ---
@@ -45,7 +45,14 @@ local cmp = require('cmp')
 
 cmp.setup({
     sources = {
+        { name = 'path' },
         { name = 'nvim_lsp' },
+        { name = 'luasnip', keyword_length = 2 },
+        { name = 'buffer',  keyword_length = 3 },
+    },
+    window = {
+        completion = cmp.config.window.bordered(),
+        documentation = cmp.config.window.bordered(),
     },
     snippet = {
         expand = function(args)
