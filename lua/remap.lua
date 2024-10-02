@@ -10,3 +10,5 @@ vim.keymap.set("x", "<leader>p", "\"_dP")
 vim.keymap.set("n", "Q", "<nop>")
 
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
+vim.keymap.set("x", "<", "<gv")
+vim.keymap.set("x", ">", ">gv")
