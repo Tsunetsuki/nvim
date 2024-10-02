@@ -28,7 +28,7 @@ lsp_zero.extend_lspconfig({
 })
 
 require("mason-lspconfig").setup({
-    ensure_installed = { "clangd", "gopls", "jsonls", "lua_ls", "pyright", "ts_ls", }
+    ensure_installed = { "clangd", "gopls", "jsonls", "lua_ls", "pyright", "ts_ls" }
 })
 require("mason-lspconfig").setup_handlers({
     function(server_name)
