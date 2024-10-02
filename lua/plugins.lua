@@ -1,8 +1,18 @@
 return {
+    --    {
+    --        "rebelot/kanagawa.nvim",
+    --        config = function()
+    --            vim.cmd.colorscheme("kanagawa-wave")
+    --        end,
+    --    },
     {
-        "rebelot/kanagawa.nvim",
+        "askfiy/visual_studio_code",
+        priority = 100,
         config = function()
-            vim.cmd.colorscheme("kanagawa-wave")
+            require("visual_studio_code").setup({
+                mode = "dark"
+            })
+            vim.cmd.colorscheme("visual_studio_code")
         end,
     },
     {
