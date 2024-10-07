@@ -14,3 +14,4 @@ vim.keymap.set("x", "<", "<gv")
 vim.keymap.set("x", ">", ">gv")
 vim.keymap.set("n", "<F8>", vim.diagnostic.goto_next)
 vim.keymap.set("n", "<S-F8>", vim.diagnostic.goto_prev)
+vim.keymap.set("n", "_", "<S-/>") -- search for QWERTZ keyboard
