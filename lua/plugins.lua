@@ -120,6 +120,12 @@ return {
         end,
     },
     {
+        "nvimtools/none-ls.nvim",
+        dependencies = {
+            "nvimtools/none-ls-extras.nvim",
+        },
+    },
+    {
         "linux-cultist/venv-selector.nvim",
         dependencies = {
             "neovim/nvim-lspconfig",
@@ -142,6 +148,9 @@ return {
         },
     },
     {
+        "none-ls-extras.nvim"
+    },
+    {
         "nvimtools/none-ls.nvim",
         config = function()
             local null_ls = require("null-ls")
@@ -149,21 +158,27 @@ return {
 
             null_ls.setup({
                 sources = {
-                    --null_ls.builtins.formatting.stylua,
-                    --require("none-ls.diagnostics.eslint"), -- requires none-ls-extras.nvim
+                    require("none-ls.diagnostics.eslint"), -- requires none-ls-extras.nvim
+                    null_ls.builtins.formatting.prettier,
+                    -- null_ls.builtins.formatting.prettierd,
                     null_ls.builtins.formatting.black
                 },
                 -- you can reuse a shared lspconfig on_attach callback here
                 on_attach = function(client, bufnr)
                     if client.supports_method("textDocument/formatting") then
                         vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
+                        -- gets executed when file is saved
                         vim.api.nvim_create_autocmd("BufWritePre", {
                             group = augroup,
                             buffer = bufnr,
                             callback = function()
                                 -- on 0.8, you should use vim.lsp.buf.format({ bufnr = bufnr }) instead
                                 -- on later neovim version, you should use vim.lsp.buf.format({ async = false }) instead
-                                vim.lsp.buf.format({ async = false })
+                                vim.lsp.buf.format({
+                                    async = false,
+                                    -- ts_ls conflicts with eslint/prettier, e.g. puts spaces between empty {}
+                                    filter = function(client_) return client_.name ~= "ts_ls" end
+                                })
                             end,
                         })
                     end
