@@ -39,11 +39,11 @@ return {
 
                         keymaps = {
                             -- You can use the capture groups defined in textobjects.scm
+                            -- You can optionally set descriptions to the mappings (used in the desc parameter of
+                            -- nvim_buf_set_keymap) which plugins like which-key display
                             ["af"] = "@function.outer",
                             ["if"] = "@function.inner",
                             ["ac"] = "@class.outer",
-                            -- You can optionally set descriptions to the mappings (used in the desc parameter of
-                            -- nvim_buf_set_keymap) which plugins like which-key display
                             ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
                             -- You can also use captures from other query groups like `locals.scm`
                             ["as"] = { query = "@scope", query_group = "locals", desc = "Select language scope" },
@@ -53,7 +53,7 @@ return {
                         selection_modes = {
                             ["@parameter.outer"] = "v", -- charwise
                             ["@function.outer"] = "v",
-                            ["@class.outer"] = "<c-v>", -- blockwise
+                            ["@class.outer"] = "v",
                         },
                         include_surrounding_whitespace = true,
                     },
@@ -80,7 +80,7 @@ return {
         dependencies = { "nvim-lua/plenary.nvim" },
         config = function()
             local builtin = require("telescope.builtin")
-            vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Telescope find files" })
+            vim.keymap.set("n", "<leader>pf", builtin.find_files, { desc = "Telescope find files" })
             vim.keymap.set("n", "<C-p>", builtin.git_files, { desc = "Telescope git files" })
             vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Telescope live grep" })
             vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" })
@@ -206,8 +206,8 @@ return {
             require("nvim-ts-autotag").setup({
                 opts = {
                     -- Defaults
-                    enable_close = true,      -- Auto close tags
-                    enable_rename = true,     -- Auto rename pairs of tags
+                    enable_close = true,          -- Auto close tags
+                    enable_rename = true,         -- Auto rename pairs of tags
                     enable_close_on_slash = false -- Auto close on trailing </
                 },
                 -- Also override individual filetype configs, these take priority.
