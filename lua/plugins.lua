@@ -86,9 +86,9 @@ return {
             vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" })
             vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope help tags" })
             -- project search for string
-            vim.keymap.set("n", "<leader>ps", function()
-                builtin.grep_string({ search = vim.fn.input("Grep > ") })
-            end)
+            -- vim.keymap.set("n", "<leader>ps", function()
+            --     builtin.grep_string({ search = vim.fn.input("Grep > ") })
+            -- end)
         end,
     },
     {
@@ -248,14 +248,32 @@ return {
                 for _, item in ipairs(harpoon_files.items) do
                     table.insert(file_paths, item.value)
                 end
+                local finder = function()
+                    local paths = {}
+                    for _, item in ipairs(harpoon_files.items) do
+                        table.insert(paths, item.value)
+                    end
 
+                    return require("telescope.finders").new_table({
+                        results = paths,
+                    })
+                end
                 require("telescope.pickers").new({}, {
                     prompt_title = "Harpoon",
-                    finder = require("telescope.finders").new_table({
-                        results = file_paths,
-                    }),
+                    finder = finder(),
                     previewer = conf.file_previewer({}),
                     sorter = conf.generic_sorter({}),
+                    attach_mappings = function(prompt_bufnr, map)
+                        map("i", "<C-d>", function()
+                            local state = require("telescope.actions.state")
+                            local selected_entry = state.get_selected_entry()
+                            local current_picker = state.get_current_picker(prompt_bufnr)
+
+                            table.remove(harpoon_files.items, selected_entry.index)
+                            current_picker:refresh(finder())
+                        end)
+                        return true
+                    end,
                 }):find()
             end
 
