@@ -16,3 +16,6 @@ vim.keymap.set("n", "<F8>", function() vim.diagnostic.goto_next({ focusable = tr
 vim.keymap.set("n", "<S-F8>", function() vim.diagnostic.goto_prev({ focusable = true }) end)
 vim.keymap.set("n", "_", "<S-/>") -- search for QWERTZ keyboard
 vim.keymap.set("n", "<leader>t", ":!start cmd.exe<CR>")
+vim.keymap.set("n", "<leader>c", function()
+    vim.cmd('!start cmd.exe /K "cd ' ..  vim.fn.stdpath("config") .. ' && nvim ."')
+end, { silent = true })
