@@ -116,50 +116,50 @@ return {
         "neovim/nvim-lspconfig",
 
         -- options copied from "manual setup" part of https://lsp-zero.netlify.app/docs/guide/lazy-loading-with-lazy-nvim.html
-        cmd = 'LspInfo',
-        event = { 'BufReadPre', 'BufNewFile' },
+        cmd = "LspInfo",
+        event = { "BufReadPre", "BufNewFile" },
         dependencies = {
-            { 'hrsh7th/cmp-nvim-lsp' },
+            { "hrsh7th/cmp-nvim-lsp" },
         },
         init = function()
             -- Reserve a space in the gutter
             -- This will avoid an annoying layout shift in the screen
-            vim.opt.signcolumn = 'yes'
+            vim.opt.signcolumn = "yes"
         end,
         config = function()
-            local lsp_defaults = require('lspconfig').util.default_config
+            local lsp_defaults = require("lspconfig").util.default_config
 
             -- Add cmp_nvim_lsp capabilities settings to lspconfig
             -- This should be executed before you configure any language server
             lsp_defaults.capabilities = vim.tbl_deep_extend(
-                'force',
+                "force",
                 lsp_defaults.capabilities,
-                require('cmp_nvim_lsp').default_capabilities()
+                require("cmp_nvim_lsp").default_capabilities()
             )
-            vim.api.nvim_create_autocmd('LspAttach', {
-                desc = 'LSP actions',
+            vim.api.nvim_create_autocmd("LspAttach", {
+                desc = "LSP actions",
                 callback = function(event)
                     local opts = { buffer = event.buf }
 
-                    vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
-                    vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
-                    vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
-                    vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
-                    vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
-                    vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
-                    vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
-                    vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
-                    vim.keymap.set({ 'n', 'x', 'i' }, '<F3>',
+                    vim.keymap.set("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
+                    vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
+                    vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
+                    vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
+                    vim.keymap.set("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
+                    vim.keymap.set("n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
+                    vim.keymap.set("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
+                    vim.keymap.set("n", "<F2>", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
+                    vim.keymap.set({ "n", "x", "i" }, "<F3>",
                         '<cmd>lua vim.lsp.buf.format({async = true, filter = function(client_) return client_.name ~= "ts_ls" end;})<cr>',
                         opts)
-                    vim.keymap.set('n', 'ca', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+                    vim.keymap.set("n", "ca", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
                 end,
             })
 
             -- These are just examples. Replace them with the language
             -- servers you have installed in your system
-            require('lspconfig').gleam.setup({})
-            require('lspconfig').ocamllsp.setup({})
+            require("lspconfig").gleam.setup({})
+            require("lspconfig").ocamllsp.setup({})
         end
     },
     {
@@ -171,14 +171,14 @@ return {
             ---
             -- Autocompletion setup
             ---
-            local cmp = require('cmp')
+            local cmp = require("cmp")
 
             cmp.setup({
                 sources = {
-                    { name = 'path' },
-                    { name = 'nvim_lsp' },
-                    { name = 'luasnip', keyword_length = 2 },
-                    { name = 'buffer',  keyword_length = 3 },
+                    { name = "path" },
+                    { name = "nvim_lsp" },
+                    { name = "luasnip", keyword_length = 2 },
+                    { name = "buffer",  keyword_length = 3 },
                 },
                 window = {
                     completion = cmp.config.window.bordered(),
@@ -191,10 +191,10 @@ return {
                     end,
                 },
                 mapping = cmp.mapping.preset.insert({
-                    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+                    ["<CR>"] = cmp.mapping.confirm({ select = true }),
                 }),
                 completion = {
-                    completeopt = 'menu,menuone,noinsert'
+                    completeopt = "menu,menuone,noinsert"
                 }
             })
         end
@@ -350,15 +350,15 @@ return {
         end,
     },
     {
-        'rmagatti/auto-session',
+        "rmagatti/auto-session",
         lazy = false,
 
         ---enables autocomplete for opts
         ---@module "auto-session"
         ---@type AutoSession.Config
         opts = {
-            suppressed_dirs = { '~/', '~/Projects', '~/Downloads', '/' },
-            -- log_level = 'debug',
+            suppressed_dirs = { "~/", "~/Projects", "~/Downloads", "/" },
+            -- log_level = "debug",
         }
     }
 }
