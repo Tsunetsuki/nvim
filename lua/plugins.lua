@@ -73,6 +73,16 @@ return {
     {
         "williamboman/mason-lspconfig.nvim",
         dependencies = { "mason.nvim" },
+        config = function()
+            require("mason-lspconfig").setup({
+                ensure_installed = { "clangd", "gopls", "jsonls", "lua_ls", "pyright", "ts_ls" },
+                handlers = {
+                    function(server_name)
+                        require("lspconfig")[server_name].setup({})
+                    end,
+                }
+            })
+        end
     },
     {
         "nvim-telescope/telescope.nvim",
@@ -96,11 +106,98 @@ return {
         build =
         "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release"
     },
+
     {
-        { "VonHeikemen/lsp-zero.nvim", branch = "v4.x" },
-        { "neovim/nvim-lspconfig" },
-        { "hrsh7th/cmp-nvim-lsp" },
-        { "hrsh7th/nvim-cmp" },
+        "VonHeikemen/lsp-zero.nvim",
+        branch = "v4.x",
+        config = false,
+    },
+    {
+        "neovim/nvim-lspconfig",
+
+        -- options copied from "manual setup" part of https://lsp-zero.netlify.app/docs/guide/lazy-loading-with-lazy-nvim.html
+        cmd = 'LspInfo',
+        event = { 'BufReadPre', 'BufNewFile' },
+        dependencies = {
+            { 'hrsh7th/cmp-nvim-lsp' },
+        },
+        init = function()
+            -- Reserve a space in the gutter
+            -- This will avoid an annoying layout shift in the screen
+            vim.opt.signcolumn = 'yes'
+        end,
+        config = function()
+            local lsp_defaults = require('lspconfig').util.default_config
+
+            -- Add cmp_nvim_lsp capabilities settings to lspconfig
+            -- This should be executed before you configure any language server
+            lsp_defaults.capabilities = vim.tbl_deep_extend(
+                'force',
+                lsp_defaults.capabilities,
+                require('cmp_nvim_lsp').default_capabilities()
+            )
+            vim.api.nvim_create_autocmd('LspAttach', {
+                desc = 'LSP actions',
+                callback = function(event)
+                    local opts = { buffer = event.buf }
+
+                    vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+                    vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
+                    vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
+                    vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
+                    vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
+                    vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
+                    vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
+                    vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+                    vim.keymap.set({ 'n', 'x', 'i' }, '<F3>',
+                        '<cmd>lua vim.lsp.buf.format({async = true, filter = function(client_) return client_.name ~= "ts_ls" end;})<cr>',
+                        opts)
+                    vim.keymap.set('n', 'ca', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+                end,
+            })
+
+            -- These are just examples. Replace them with the language
+            -- servers you have installed in your system
+            require('lspconfig').gleam.setup({})
+            require('lspconfig').ocamllsp.setup({})
+        end
+    },
+    {
+        "hrsh7th/cmp-nvim-lsp"
+    },
+    {
+        "hrsh7th/nvim-cmp",
+        config = function()
+            ---
+            -- Autocompletion setup
+            ---
+            local cmp = require('cmp')
+
+            cmp.setup({
+                sources = {
+                    { name = 'path' },
+                    { name = 'nvim_lsp' },
+                    { name = 'luasnip', keyword_length = 2 },
+                    { name = 'buffer',  keyword_length = 3 },
+                },
+                window = {
+                    completion = cmp.config.window.bordered(),
+                    documentation = cmp.config.window.bordered(),
+                },
+                snippet = {
+                    expand = function(args)
+                        -- You need Neovim v0.10 to use vim.snippet
+                        vim.snippet.expand(args.body)
+                    end,
+                },
+                mapping = cmp.mapping.preset.insert({
+                    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+                }),
+                completion = {
+                    completeopt = 'menu,menuone,noinsert'
+                }
+            })
+        end
     },
     {
         "NMAC427/guess-indent.nvim",
@@ -163,7 +260,7 @@ return {
                     require("none-ls.diagnostics.eslint"), -- requires none-ls-extras.nvim
                     null_ls.builtins.formatting.prettier,
                     -- null_ls.builtins.formatting.prettierd,
-                    null_ls.builtins.formatting.black
+                    null_ls.builtins.formatting.black,
                 },
                 -- you can reuse a shared lspconfig on_attach callback here
                 on_attach = function(client, bufnr)
