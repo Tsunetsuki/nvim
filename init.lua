@@ -1,11 +1,10 @@
 require("options")
 require("remap")
 require("config.lazy")
+
 ---
 -- LSP configuration
 ---
-local lsp_zero = require('lsp-zero')
-
 local lsp_attach = function(client, bufnr)
     local opts = { buffer = bufnr }
     vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
@@ -23,7 +22,7 @@ local lsp_attach = function(client, bufnr)
 end
 
 
-
+local lsp_zero = require('lsp-zero')
 lsp_zero.extend_lspconfig({
     sign_text = true,
     lsp_attach = lsp_attach,

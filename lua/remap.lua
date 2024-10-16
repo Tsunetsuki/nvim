@@ -9,13 +9,25 @@ vim.keymap.set({ "n", "x" }, "<leader>d", "\"_d")
 vim.keymap.set("x", "<leader>p", "\"_dP")
 vim.keymap.set("n", "Q", "<nop>")
 
+-- find and replace word under cursor
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
+
+-- after changing indentation: keep visual selection
 vim.keymap.set("x", "<", "<gv")
 vim.keymap.set("x", ">", ">gv")
+
+-- diagnostics, and make diag. window focusable so text can be selected from it
 vim.keymap.set("n", "<F8>", function() vim.diagnostic.goto_next({ focusable = true }) end)
 vim.keymap.set("n", "<S-F8>", function() vim.diagnostic.goto_prev({ focusable = true }) end)
+
 vim.keymap.set("n", "_", "<S-/>") -- search for QWERTZ keyboard
+
+-- shortcuts to open terminal and nvim config
 vim.keymap.set("n", "<leader>t", ":!start cmd.exe<CR>")
 vim.keymap.set("n", "<leader>c", function()
     vim.cmd('!start cmd.exe /K "cd ' ..  vim.fn.stdpath("config") .. ' && nvim ."')
 end, { silent = true })
+
+-- don't yank single letters on deletion
+vim.keymap.set("n", "x", "\"_x")
+vim.keymap.set("n", "s", "\"_s")
