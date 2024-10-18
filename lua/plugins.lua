@@ -360,5 +360,11 @@ return {
             suppressed_dirs = { "~/", "~/Projects", "~/Downloads", "/" },
             -- log_level = "debug",
         }
+    },
+    {
+        "luk400/vim-jukit",
+        config=function()
+            vim.g._jukit_python_os_cmd = 'python';
+        end;
     }
 }
