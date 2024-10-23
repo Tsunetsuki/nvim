@@ -85,6 +85,9 @@ return {
         end
     },
     {
+        "nvim-tree/nvim-web-devicons"
+    },
+    {
         "nvim-telescope/telescope.nvim",
         tag = "0.1.8",
         dependencies = { "nvim-lua/plenary.nvim" },
@@ -363,8 +366,9 @@ return {
     },
     {
         "luk400/vim-jukit",
-        config=function()
+        config = function()
             vim.g._jukit_python_os_cmd = 'python';
-        end;
+        end,
+        ft = "py"
     }
 }
