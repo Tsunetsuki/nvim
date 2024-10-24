@@ -99,9 +99,9 @@ return {
             vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" })
             vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope help tags" })
             -- project search for string
-            -- vim.keymap.set("n", "<leader>ps", function()
-            --     builtin.grep_string({ search = vim.fn.input("Grep > ") })
-            -- end)
+            vim.keymap.set("n", "<leader>ps", function()
+                builtin.grep_string({ search = vim.fn.input("Grep > ") })
+            end)
         end,
     },
     {
@@ -194,6 +194,9 @@ return {
                     end,
                 },
                 mapping = cmp.mapping.preset.insert({
+                    ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+                    ["<C-f>"] = cmp.mapping.scroll_docs(4),
+                    ["<C-s>"] = cmp.mapping.complete(), -- ctrl-space does not work (seems to be due to cmd)
                     ["<CR>"] = cmp.mapping.confirm({ select = true }),
                 }),
                 completion = {
@@ -370,5 +373,6 @@ return {
             vim.g._jukit_python_os_cmd = 'python';
         end,
         ft = "py"
-    }
+    },
+
 }
