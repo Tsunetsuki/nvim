@@ -30,7 +30,7 @@ vim.keymap.set("n", "s", "\"_s")
 -- open terminal
 vim.keymap.set("n", "<leader>tt", ":!start cmd.exe<CR>")
 -- open nvim config
-vim.keymap.set("n", "<leader>c", function()
+vim.keymap.set("n", "<leader>cc", function()
   vim.cmd('!start cmd.exe /K "cd ' .. vim.fn.stdpath("config") .. ' && nvim ."')
 end, { silent = true })
 -- some project specific stuff, make this on a per-project basis later!
