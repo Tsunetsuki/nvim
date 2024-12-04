@@ -475,6 +475,14 @@ return {
 
             vim.g.vimtex_view_general_viewer = 'sumatraPDF'
             vim.g.vimtex_view_general_options = '-reuse-instance @pdf'
+
+            -- spellcheck
+            vim.api.nvim_create_autocmd("FileType", {
+                pattern = "tex", -- Change to the desired file type(s)
+                callback = function()
+                    vim.cmd("setlocal spell spelllang=en_us")
+                end,
+            })
             -- vim.g.vimtex_view_general_options_latexmk = '-reuse-instance'
             -- vim.g.vimtex_view_method = "sumatrapdf"
         end
