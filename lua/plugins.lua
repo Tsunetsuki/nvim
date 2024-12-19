@@ -155,7 +155,7 @@ return {
                     vim.keymap.set({ "n", "x", "i" }, "<F3>",
                         '<cmd>lua vim.lsp.buf.format({async = true, filter = function(client_) return client_.name ~= "ts_ls" end;})<cr>',
                         opts)
-                    vim.keymap.set("n", "ca", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
+                    vim.keymap.set("n", " ca", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
                 end,
             })
 
@@ -487,4 +487,10 @@ return {
             -- vim.g.vimtex_view_method = "sumatrapdf"
         end
     },
+    {
+        "norcalli/nvim-colorizer.lua",
+        config = function()
+            require("colorizer").setup()
+        end,
+    }
 }

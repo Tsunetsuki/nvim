@@ -32,3 +32,13 @@ vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 vim.opt.foldenable = false
 
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "tex", "txt" },
+  callback = function()
+    vim.opt_local.wrap = true
+    vim.g.vimtex_quickfix_ignore_filters = {
+      'Underfull',
+      'Overfull',
+    }
+  end,
+})
