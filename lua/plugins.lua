@@ -247,7 +247,39 @@ return {
                         -- notify_user_on_venv_activation = true,
                     }
                 }
+
+
+
             })
+
+            function ExecuteCurrentPythonFile()
+                local file_path = vim.fn.expand('%:p')
+                local dir_path = vim.fn.getcwd() --vim.fn.expand('%:p:h')
+                local venv = os.getenv("VIRTUAL_ENV") or os.getenv("CONDA_PREFIX")
+
+                if venv == nil then
+                    return
+                end
+
+                local venv_activation_string
+                if string.find(venv, "conda", 1, true) then
+                    venv_activation_string = string.format("conda activate %s", venv)
+                else
+                    venv_activation_string = string.format("%s\\Scripts\\activate.bat", venv)
+                end
+
+                vim.cmd("vsplit | terminal")
+                vim.fn.feedkeys("i", "n")
+                vim.fn.feedkeys(string.format('cd %s && set PYTHONPATH=. && %s && python %s\n',
+                    dir_path,
+                    venv_activation_string,
+                    file_path))
+            end
+
+            vim.api.nvim_set_keymap('n', '<leader><F5>', [[:lua ExecuteCurrentPythonFile()<CR>]],
+                { noremap = true, silent = true })
+            -- vim.api.nvim_set_keymap('n', '<leader><F5>', function() ExecuteCurrentPythonFile() end,
+            --     { noremap = true, silent = true })
         end,
         keys = {
             { ",v", "<cmd>VenvSelect<cr>" },
@@ -476,13 +508,67 @@ return {
             vim.g.vimtex_view_general_viewer = 'sumatraPDF'
             vim.g.vimtex_view_general_options = '-reuse-instance @pdf'
 
+            -- vim.g.vimtex_compiler_method = "latexpdf"
             -- spellcheck
             vim.api.nvim_create_autocmd("FileType", {
                 pattern = "tex", -- Change to the desired file type(s)
                 callback = function()
                     vim.cmd("setlocal spell spelllang=en_us")
+                    vim.api.nvim_set_keymap('n', '<leader>r', [[:lua ExecutePythonFile()<CR>]],
+                        { noremap = true, silent = true })
+
+                    function ExecuteCurrentPythonFile()
+                        local file_path = vim.fn.expand('%:p')
+                        local dir_path = vim.fn.expand('%:p:h')
+
+                        -- Open a terminal and execute the file
+                        vim.cmd('split | terminal')
+                        vim.cmd(string.format('call jobsend(&channel, "cd %s && set PYTHONPATH=. && python %s\n")',
+                            dir_path, file_path))
+                    end
                 end,
             })
+
+            -- vim.keymap.set("n", "<leader>lr", function()
+            --     local cwd = vim.fn.getcwd()
+            --     vim.cmd('!start cmd.exe /K "cd ' .. cwd .. ' && pdflatex Thesis.tex"')
+            -- end, { silent = true })
+
+
+            vim.api.nvim_create_user_command('RunPdfLatex', function()
+                local file = vim.fn.expand('%')
+                if file == '' then
+                    print("No file to compile!")
+                    return
+                end
+                print("Running pdflatex on " .. file)
+                vim.fn.jobstart({ 'pdflatex', file }, {
+                    stdout_buffered = true,
+                    stderr_buffered = true,
+                    on_stdout = function(_, data)
+                        if data then
+                            print(table.concat(data, '\n'))
+                        end
+                    end,
+                    on_stderr = function(_, data)
+                        if data then
+                            vim.notify(table.concat(data, '\n'), vim.log.levels.ERROR)
+                        end
+                    end,
+                    on_exit = function(_, code)
+                        if code == 0 then
+                            print("pdflatex compilation succeeded.")
+                        else
+                            print("pdflatex compilation failed.")
+                        end
+                    end,
+                })
+            end, { desc = "Run pdflatex on the current file" })
+
+            -- shortcut to rerun pdflatex on current file
+            vim.api.nvim_set_keymap('n', '<localleader>lr', ':RunPdfLatex<CR>', { noremap = true, silent = true })
+
+            --
             -- vim.g.vimtex_view_general_options_latexmk = '-reuse-instance'
             -- vim.g.vimtex_view_method = "sumatrapdf"
         end

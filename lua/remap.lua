@@ -29,15 +29,22 @@ vim.keymap.set("n", "s", "\"_s")
 
 -- open terminal
 vim.keymap.set("n", "<leader>tt", ":!start cmd.exe<CR>")
+
 -- open nvim config
 vim.keymap.set("n", "<leader>cc", function()
   vim.cmd('!start cmd.exe /K "cd ' .. vim.fn.stdpath("config") .. ' && nvim ."')
 end, { silent = true })
+
+
 -- some project specific stuff, make this on a per-project basis later!
 -- vim.keymap.set("n", "<leader>eu", [[:!eas update --channel=preview -m=""<Left>]])
 vim.keymap.set("n", "<leader>eu", function()
   vim.cmd("vsplit | terminal")
-  vim.fn.feedkeys("i", "n") --switch to insert mode inside terminal
+  vim.fn.feedkeys("i", "n")                                                                      --switch to insert mode inside terminal
   vim.fn.feedkeys("eas update --channel=preview -m=\"\"", "n")
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Left>", true, false, true), 'n', false) --move cursor inside -m=""
 end)
+
+-- jk keys: when there is no count attached (e.g. 2j), navigate through wrapped line
+vim.api.nvim_set_keymap('n', 'j', "v:count == 0 ? 'gj' : 'j'", { noremap = true, expr = true, silent = true })
+vim.api.nvim_set_keymap('n', 'k', "v:count == 0 ? 'gk' : 'k'", { noremap = true, expr = true, silent = true })
