@@ -26,6 +26,7 @@ vim.keymap.set("n", "_", "<S-/>") -- search for QWERTZ keyboard
 -- don't yank single letters on deletion
 vim.keymap.set("n", "x", "\"_x")
 vim.keymap.set("n", "s", "\"_s")
+vim.keymap.set("n", "E", "ge")
 
 -- open terminal
 vim.keymap.set("n", "<leader>tt", ":!start cmd.exe<CR>")

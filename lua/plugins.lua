@@ -93,6 +93,9 @@ return {
         dependencies = { "nvim-lua/plenary.nvim" },
         config = function()
             local builtin = require("telescope.builtin")
+            --ignore some file types. pt files are models and will cause telescope to freeze trying to preview
+            require('telescope').setup { defaults = { file_ignore_patterns = { "%.ipynb", ".pt" } } }
+
             vim.keymap.set("n", "<leader>pf", builtin.find_files, { desc = "Telescope find files" })
             vim.keymap.set("n", "<C-p>", builtin.git_files, { desc = "Telescope git files" })
             vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Telescope live grep" })
