@@ -13,7 +13,7 @@ return {
         "nvim-treesitter/nvim-treesitter",
         config = function()
             require("nvim-treesitter.configs").setup({
-                ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "python", "typescript", "sql" },
+                ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "python", "typescript", "sql" , "latex"},
 
                 -- Recommendation: set to false if you don"t have `tree-sitter` CLI installed locally
                 auto_install = true,
@@ -75,7 +75,7 @@ return {
         dependencies = { "mason.nvim" },
         config = function()
             require("mason-lspconfig").setup({
-                ensure_installed = { "clangd", "gopls", "jsonls", "lua_ls", "pyright", "ts_ls" },
+                ensure_installed = { "clangd", "jsonls", "lua_ls", "pyright", "ts_ls", "texlab" },
                 handlers = {
                     function(server_name)
                         require("lspconfig")[server_name].setup({})
@@ -510,24 +510,6 @@ return {
 
             -- vim.g.vimtex_compiler_method = "latexpdf"
             -- spellcheck
-            vim.api.nvim_create_autocmd("FileType", {
-                pattern = "tex", -- Change to the desired file type(s)
-                callback = function()
-                    vim.cmd("setlocal spell spelllang=en_us")
-                    vim.api.nvim_set_keymap('n', '<leader>r', [[:lua ExecutePythonFile()<CR>]],
-                        { noremap = true, silent = true })
-
-                    function ExecuteCurrentPythonFile()
-                        local file_path = vim.fn.expand('%:p')
-                        local dir_path = vim.fn.expand('%:p:h')
-
-                        -- Open a terminal and execute the file
-                        vim.cmd('split | terminal')
-                        vim.cmd(string.format('call jobsend(&channel, "cd %s && set PYTHONPATH=. && python %s\n")',
-                            dir_path, file_path))
-                    end
-                end,
-            })
 
             -- vim.keymap.set("n", "<leader>lr", function()
             --     local cwd = vim.fn.getcwd()
@@ -575,6 +557,7 @@ return {
     },
     {
         "norcalli/nvim-colorizer.lua",
+        -- preview hex color values
         config = function()
             require("colorizer").setup()
         end,
