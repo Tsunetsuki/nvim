@@ -13,7 +13,7 @@ return {
         "nvim-treesitter/nvim-treesitter",
         config = function()
             require("nvim-treesitter.configs").setup({
-                ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "python", "typescript", "sql" , "latex"},
+                ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "python", "typescript", "sql", "latex" },
 
                 -- Recommendation: set to false if you don"t have `tree-sitter` CLI installed locally
                 auto_install = true,
@@ -78,7 +78,36 @@ return {
                 ensure_installed = { "clangd", "jsonls", "lua_ls", "pyright", "ts_ls", "texlab" },
                 handlers = {
                     function(server_name)
-                        require("lspconfig")[server_name].setup({})
+                        if server_name == "ltex" then
+                            local path = vim.fn.stdpath("config") .. "/spell/en.utf-8.add"
+                            local words = {}
+                            for word in io.open(path, "r"):lines() do
+                                table.insert(words, word)
+                            end
+
+                            require("lspconfig").ltex.setup({
+                                settings = {
+                                    ltex = {
+                                        disabledRules = {
+                                            ["en-US"] = {
+                                                "COMMA_PARENTHESIS_WHITESPACE",
+                                                "SMALL_NUMBER_OF",
+                                                "LARGE_NUMBER_OF",
+                                                "MORFOLOGIK_RULE_EN_US",
+                                                "WHETHER",
+                                                "Y_ALL",
+                                            }
+                                        },
+                                        dictionary = {
+                                            en = words,
+                                        },
+
+                                    }
+                                }
+                            })
+                        else
+                            require("lspconfig")[server_name].setup({})
+                        end
                     end,
                 }
             })
@@ -94,7 +123,7 @@ return {
         config = function()
             local builtin = require("telescope.builtin")
             --ignore some file types. pt files are models and will cause telescope to freeze trying to preview
-            require('telescope').setup { defaults = { file_ignore_patterns = { "%.ipynb", "%.pt" , "%.lock"} } }
+            require('telescope').setup { defaults = { file_ignore_patterns = { "%.ipynb", "%.pt", "%.lock", "%.mp3", "%.png", "%.jpg", "%.jpeg" } } }
 
             vim.keymap.set("n", "<leader>pf", builtin.find_files, { desc = "Telescope find files" })
             vim.keymap.set("n", "<C-p>", builtin.git_files, { desc = "Telescope git files" })
@@ -553,6 +582,16 @@ return {
             -- shortcut to rerun pdflatex on current file
             vim.api.nvim_set_keymap('n', '<localleader>lr', ':RunPdfLatex<CR>', { noremap = true, silent = true })
 
+
+            vim.api.nvim_create_user_command("CheckThesis", function()
+                local cmd =
+                [[java -jar "C:\Program Files\textidote\textidote.jar" --output html Thesis.tex > "C:\Users\lpaal\Downloads\report.html" & cmd /c start "" "C:\Users\lpaal\Downloads\report.html"]]
+                vim.fn.system(cmd)
+                print("Textidote check complete! Report opened.")
+            end, {})
+
+            vim.api.nvim_set_keymap('n', '<localleader>lg', ':CheckThesis<CR>', { noremap = true, silent = true })
+
             --
             -- vim.g.vimtex_view_general_options_latexmk = '-reuse-instance'
             -- vim.g.vimtex_view_method = "sumatrapdf"
@@ -564,5 +603,77 @@ return {
         config = function()
             require("colorizer").setup()
         end,
-    }
+    }, {
+    "mg979/vim-visual-multi",
+    -- multiline cursors
+}
+,
+    -- {
+    --     'stevearc/oil.nvim',
+    --     ---@module 'oil'
+    --     ---@type oil.SetupOpts
+    --     opts = {},
+    --     -- Optional dependencies
+    --     dependencies = { { "echasnovski/mini.icons", opts = {} } },
+    --     -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
+    --     -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
+    --     lazy = false,
+    --     config = function()
+    --         require("oil").setup()
+    --     end,
+    -- }
+    {
+        "kiyoon/treesitter-indent-object.nvim",
+        keys = {
+            {
+                "ai",
+                function() require 'treesitter_indent_object.textobj'.select_indent_outer() end,
+                mode = { "x", "o" },
+                desc = "Select context-aware indent (outer)",
+            },
+            {
+                "aI",
+                function() require 'treesitter_indent_object.textobj'.select_indent_outer(true) end,
+                mode = { "x", "o" },
+                desc = "Select context-aware indent (outer, line-wise)",
+            },
+            {
+                "ii",
+                function() require 'treesitter_indent_object.textobj'.select_indent_inner() end,
+                mode = { "x", "o" },
+                desc = "Select context-aware indent (inner, partial range)",
+            },
+            {
+                "iI",
+                function() require 'treesitter_indent_object.textobj'.select_indent_inner(true, 'V') end,
+                mode = { "x", "o" },
+                desc = "Select context-aware indent (inner, entire range) in line-wise visual mode",
+            },
+        },
+    },
+    -- {
+    --     "valentjn/ltex-ls",
+    --     config = function()
+    --         local path = vim.fn.stdpath("config") .. "/spell/en.utf-8.add"
+    --         local words = {}
+    --
+    --         for word in io.open(path, "r"):lines() do
+    --             table.insert(words, word)
+    --         end
+    --
+    --         require 'lspconfig'.ltex.setup {
+    --             settings = {
+    --                 ltex = {
+    --                     language = "en",                    -- Set the language (e.g., "en" for English)
+    --                     diagnosticSeverity = "information", -- Adjust severity levels
+    --                     --  "C:\\Users\\lpaal\\AppData\\Local\\nvim\\spell\\en.utf-8.add"llk
+    --                     dictionary = {
+    --                         en = words,
+    --                     },
+    --                 }
+    --             }
+    --         }
+    --     end
+    -- },
+
 }
