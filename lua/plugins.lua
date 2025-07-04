@@ -603,11 +603,12 @@ return {
         config = function()
             require("colorizer").setup()
         end,
-    }, {
-    "mg979/vim-visual-multi",
-    -- multiline cursors
-}
-,
+    },
+    {
+        -- multiline cursors
+        "mg979/vim-visual-multi",
+    }
+    ,
     -- {
     --     'stevearc/oil.nvim',
     --     ---@module 'oil'
