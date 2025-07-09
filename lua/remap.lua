@@ -14,8 +14,12 @@ vim.keymap.set("n", "Q", "<nop>")
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 
 -- after changing indentation: keep visual selection
-vim.keymap.set("x", "<", "<gv")
 vim.keymap.set("x", ">", ">gv")
+vim.keymap.set("x", "<", "<gv")
+vim.keymap.set("x", "<Tab>", ">gv")
+vim.keymap.set("x", "<S-Tab>", "<gv")
+vim.keymap.set("n", "<Tab>", ">>")
+vim.keymap.set("n", "<S-Tab>", "<<")
 
 -- diagnostics, and make diag. window focusable so text can be selected from it
 vim.keymap.set("n", "<F8>", function() vim.diagnostic.goto_next({ focusable = true }) end)
@@ -29,7 +33,11 @@ vim.keymap.set("n", "s", "\"_s")
 vim.keymap.set("n", "E", "ge")
 
 -- open terminal
-vim.keymap.set("n", "<leader>tt", ":!start cmd.exe<CR>")
+if vim.loop.os_uname().sysname == "Windows_NT" then
+  vim.keymap.set("n", "<leader>tt", ":!start cmd.exe<CR>")
+else
+  vim.keymap.set("n", "<leader>tt", ":!kitty &<CR>")
+end
 
 -- open nvim config
 vim.keymap.set("n", "<leader>cc", function()

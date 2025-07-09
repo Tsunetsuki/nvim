@@ -72,10 +72,12 @@ return {
     },
     {
         "williamboman/mason-lspconfig.nvim",
-        dependencies = { "mason.nvim" },
+        dependencies = { "mason.nvim",
+            "neovim/nvim-lspconfig",
+        },
         config = function()
             require("mason-lspconfig").setup({
-                ensure_installed = { "clangd", "jsonls", "lua_ls", "pyright", "ts_ls", "texlab" },
+                ensure_installed = { "clangd", "jsonls", "lua_ls", "pyright", "ts_ls" },
                 handlers = {
                     function(server_name)
                         if server_name == "ltex" then
@@ -527,76 +529,76 @@ return {
                 { silent = true, desc = "evaluate visual selection" })
         end,
     },
-    {
-        "lervag/vimtex",
-        lazy = false, -- we don't want to lazy load VimTeX
-        -- tag = "v2.15", -- uncomment to pin to a specific release
-        init = function()
-            -- VimTeX configuration goes here, e.g.
-
-            -- vim.g.vimtex_view_general_viewer = 'okular'
-            -- vim.g.vimtex_view_general_options = '--unique file:@pdf#src:@line@tex'
-
-            vim.g.vimtex_view_general_viewer = 'sumatraPDF'
-            vim.g.vimtex_view_general_options = '-reuse-instance @pdf'
-
-            -- vim.g.vimtex_compiler_method = "latexpdf"
-            -- spellcheck
-
-            -- vim.keymap.set("n", "<leader>lr", function()
-            --     local cwd = vim.fn.getcwd()
-            --     vim.cmd('!start cmd.exe /K "cd ' .. cwd .. ' && pdflatex Thesis.tex"')
-            -- end, { silent = true })
-
-
-            vim.api.nvim_create_user_command('RunPdfLatex', function()
-                local file = vim.fn.expand('%')
-                if file == '' then
-                    print("No file to compile!")
-                    return
-                end
-                print("Running pdflatex on " .. file)
-                vim.fn.jobstart({ 'pdflatex', file }, {
-                    stdout_buffered = true,
-                    stderr_buffered = true,
-                    on_stdout = function(_, data)
-                        if data then
-                            print(table.concat(data, '\n'))
-                        end
-                    end,
-                    on_stderr = function(_, data)
-                        if data then
-                            vim.notify(table.concat(data, '\n'), vim.log.levels.ERROR)
-                        end
-                    end,
-                    on_exit = function(_, code)
-                        if code == 0 then
-                            print("pdflatex compilation succeeded.")
-                        else
-                            print("pdflatex compilation failed.")
-                        end
-                    end,
-                })
-            end, { desc = "Run pdflatex on the current file" })
-
-            -- shortcut to rerun pdflatex on current file
-            vim.api.nvim_set_keymap('n', '<localleader>lr', ':RunPdfLatex<CR>', { noremap = true, silent = true })
-
-
-            vim.api.nvim_create_user_command("CheckThesis", function()
-                local cmd =
-                [[java -jar "C:\Program Files\textidote\textidote.jar" --output html Thesis.tex > "C:\Users\lpaal\Downloads\report.html" & cmd /c start "" "C:\Users\lpaal\Downloads\report.html"]]
-                vim.fn.system(cmd)
-                print("Textidote check complete! Report opened.")
-            end, {})
-
-            vim.api.nvim_set_keymap('n', '<localleader>lg', ':CheckThesis<CR>', { noremap = true, silent = true })
-
-            --
-            -- vim.g.vimtex_view_general_options_latexmk = '-reuse-instance'
-            -- vim.g.vimtex_view_method = "sumatrapdf"
-        end
-    },
+    -- {
+    --     "lervag/vimtex",
+    --     lazy = false, -- we don't want to lazy load VimTeX
+    --     -- tag = "v2.15", -- uncomment to pin to a specific release
+    --     init = function()
+    --         -- VimTeX configuration goes here, e.g.
+    --
+    --         -- vim.g.vimtex_view_general_viewer = 'okular'
+    --         -- vim.g.vimtex_view_general_options = '--unique file:@pdf#src:@line@tex'
+    --
+    --         vim.g.vimtex_view_general_viewer = 'sumatraPDF'
+    --         vim.g.vimtex_view_general_options = '-reuse-instance @pdf'
+    --
+    --         -- vim.g.vimtex_compiler_method = "latexpdf"
+    --         -- spellcheck
+    --
+    --         -- vim.keymap.set("n", "<leader>lr", function()
+    --         --     local cwd = vim.fn.getcwd()
+    --         --     vim.cmd('!start cmd.exe /K "cd ' .. cwd .. ' && pdflatex Thesis.tex"')
+    --         -- end, { silent = true })
+    --
+    --
+    --         vim.api.nvim_create_user_command('RunPdfLatex', function()
+    --             local file = vim.fn.expand('%')
+    --             if file == '' then
+    --                 print("No file to compile!")
+    --                 return
+    --             end
+    --             print("Running pdflatex on " .. file)
+    --             vim.fn.jobstart({ 'pdflatex', file }, {
+    --                 stdout_buffered = true,
+    --                 stderr_buffered = true,
+    --                 on_stdout = function(_, data)
+    --                     if data then
+    --                         print(table.concat(data, '\n'))
+    --                     end
+    --                 end,
+    --                 on_stderr = function(_, data)
+    --                     if data then
+    --                         vim.notify(table.concat(data, '\n'), vim.log.levels.ERROR)
+    --                     end
+    --                 end,
+    --                 on_exit = function(_, code)
+    --                     if code == 0 then
+    --                         print("pdflatex compilation succeeded.")
+    --                     else
+    --                         print("pdflatex compilation failed.")
+    --                     end
+    --                 end,
+    --             })
+    --         end, { desc = "Run pdflatex on the current file" })
+    --
+    --         -- shortcut to rerun pdflatex on current file
+    --         vim.api.nvim_set_keymap('n', '<localleader>lr', ':RunPdfLatex<CR>', { noremap = true, silent = true })
+    --
+    --
+    --         vim.api.nvim_create_user_command("CheckThesis", function()
+    --             local cmd =
+    --             [[java -jar "C:\Program Files\textidote\textidote.jar" --output html Thesis.tex > "C:\Users\lpaal\Downloads\report.html" & cmd /c start "" "C:\Users\lpaal\Downloads\report.html"]]
+    --             vim.fn.system(cmd)
+    --             print("Textidote check complete! Report opened.")
+    --         end, {})
+    --
+    --         vim.api.nvim_set_keymap('n', '<localleader>lg', ':CheckThesis<CR>', { noremap = true, silent = true })
+    --
+    --         --
+    --         -- vim.g.vimtex_view_general_options_latexmk = '-reuse-instance'
+    --         -- vim.g.vimtex_view_method = "sumatrapdf"
+    --     end
+    -- },
     {
         "norcalli/nvim-colorizer.lua",
         -- preview hex color values
