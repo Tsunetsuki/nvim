@@ -32,17 +32,23 @@ vim.keymap.set("n", "x", "\"_x")
 vim.keymap.set("n", "s", "\"_s")
 vim.keymap.set("n", "E", "ge")
 
--- open terminal
+-- os dependent: open terminal, open nvim config
 if vim.loop.os_uname().sysname == "Windows_NT" then
   vim.keymap.set("n", "<leader>tt", ":!start cmd.exe<CR>")
+  --
+  vim.keymap.set("n", "<leader>cc", function()
+    vim.cmd('!start cmd.exe /K "cd ' .. vim.fn.stdpath("config") .. ' && nvim ."')
+  end, { silent = true })
 else
   vim.keymap.set("n", "<leader>tt", ":!kitty &<CR>")
+  vim.keymap.set("n", "<leader>cc", function()
+    local config_path = vim.fn.stdpath("config")
+    vim.fn.jobstart({
+      "kitty", "--detach", "sh", "-c", "cd " .. config_path .. " && nvim ."
+    }, { detach = true })
+  end, { silent = true })
 end
 
--- open nvim config
-vim.keymap.set("n", "<leader>cc", function()
-  vim.cmd('!start cmd.exe /K "cd ' .. vim.fn.stdpath("config") .. ' && nvim ."')
-end, { silent = true })
 
 
 -- some project specific stuff, make this on a per-project basis later!
