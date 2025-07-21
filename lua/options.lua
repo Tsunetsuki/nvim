@@ -33,7 +33,9 @@ vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 vim.opt.foldenable = false
 
 
-vim.api.nvim_create_autocmd("FileType", {
+local autocmd = vim.api.nvim_create_autocmd
+
+autocmd("FileType", {
   pattern = { "tex" },
   callback = function()
     vim.opt_local.wrap = true
@@ -45,14 +47,14 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
-vim.api.nvim_create_autocmd("FileType", {
+autocmd("FileType", {
   pattern = "text", -- applies to txt files
   callback = function()
     vim.opt_local.wrap = true
   end,
 })
 
-vim.api.nvim_create_autocmd("FileType", {
+autocmd("FileType", {
   pattern = "py",
   callback = function()
     vim.api.nvim_set_keymap('n', '<leader>r', [[:lua ExecutePythonFile()<CR>]],
@@ -67,5 +69,20 @@ vim.api.nvim_create_autocmd("FileType", {
       vim.cmd(string.format('call jobsend(&channel, "cd %s && set PYTHONPATH=. && python %s\n")',
         dir_path, file_path))
     end
+  end,
+})
+
+
+autocmd("VimEnter", {
+  callback = function()
+    --NVIM_ENTER=1
+    vim.cmd([[call chansend(v:stderr, "\033]1337;SetUserVar=NVIM_ENTER=MQ==\007")]])
+  end,
+})
+
+autocmd("VimLeavePre", {
+  callback = function()
+    --NVIM_ENTER=0
+    vim.cmd([[call chansend(v:stderr, "\033]1337;SetUserVar=NVIM_ENTER=MA==\007")]])
   end,
 })

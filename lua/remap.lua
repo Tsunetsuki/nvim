@@ -23,14 +23,24 @@ vim.keymap.set("n", "<S-Tab>", "<<")
 
 -- diagnostics, and make diag. window focusable so text can be selected from it
 vim.keymap.set("n", "<F8>", function() vim.diagnostic.goto_next({ focusable = true }) end)
-vim.keymap.set("n", "<S-F8>", function() vim.diagnostic.goto_prev({ focusable = true }) end)
+vim.keymap.set("n", "<F7>", function() vim.diagnostic.goto_prev({ focusable = true }) end)
+
+-- jump between windows
+vim.keymap.set("n", "<C-h>", "<C-w>h")
+vim.keymap.set("n", "<C-l>", "<C-w>l")
+vim.keymap.set("n", "<C-j>", "<C-w>j")
+vim.keymap.set("n", "<C-k>", "<C-w>k")
 
 vim.keymap.set("n", "_", "<S-/>") -- search for QWERTZ keyboard
 
 -- don't yank single letters on deletion
 vim.keymap.set("n", "x", "\"_x")
 vim.keymap.set("n", "s", "\"_s")
+
 vim.keymap.set("n", "E", "ge")
+
+-- make it possible to copy text with ctrl+shift+c
+vim.keymap.set("n", "<C-S-c>", "y")
 
 -- os dependent: open terminal, open nvim config
 if vim.loop.os_uname().sysname == "Windows_NT" then
