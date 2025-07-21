@@ -316,7 +316,7 @@ return {
             --     { noremap = true, silent = true })
         end,
         keys = {
-            { ",v", "<cmd>VenvSelect<cr>" },
+            { '<leader>vs', '<cmd>VenvSelect<cr>' },
         },
     },
     {
