@@ -6,8 +6,15 @@ return {
             require("visual_studio_code").setup({
                 mode = "dark"
             })
-            vim.cmd.colorscheme("visual_studio_code")
+            -- vim.cmd.colorscheme("visual_studio_code")
         end,
+    },
+    {
+        "rebelot/kanagawa.nvim",
+        config = function()
+            vim.cmd("colorscheme kanagawa")
+        end,
+
     },
     {
         "nvim-treesitter/nvim-treesitter",
@@ -678,5 +685,18 @@ return {
     --         }
     --     end
     -- },
+    {
+        "nvim-neorg/neorg",
+        lazy = false,  -- Disable lazy loading as some `lazy.nvim` distributions set `lazy = true` by default
+        version = "*", -- Pin Neorg to the latest stable release
+        config = function()
+            require("neorg").setup({
+                load = {
+                    ["core.defaults"] = {},
+                    ["core.concealer"] = {}, -- We added this line!
+                }
+            })
+        end,
 
+    }
 }
