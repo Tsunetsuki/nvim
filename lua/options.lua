@@ -28,8 +28,9 @@ vim.opt.swapfile = false
 
 vim.g.mapleader = " "
 
-vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+-- vim.opt.foldmethod = "expr"
+-- vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt.foldmethod = "indent"
 vim.opt.foldenable = false
 
 
