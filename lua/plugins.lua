@@ -1,21 +1,20 @@
 return {
     {
         "askfiy/visual_studio_code",
-        priority = 100,
         config = function()
             require("visual_studio_code").setup({
                 mode = "dark"
             })
-            -- vim.cmd.colorscheme("visual_studio_code")
+            vim.cmd.colorscheme("visual_studio_code")
         end,
     },
-    {
-        "rebelot/kanagawa.nvim",
-        config = function()
-            vim.cmd("colorscheme kanagawa")
-        end,
-
-    },
+    -- {
+    --     "rebelot/kanagawa.nvim",
+    --     config = function()
+    --         vim.cmd("colorscheme kanagawa")
+    --     end,
+    --
+    -- },
     {
         "nvim-treesitter/nvim-treesitter",
         config = function()
@@ -720,5 +719,21 @@ return {
             }
         end
 
+    },
+    {
+        "NeogitOrg/neogit",
+        dependencies = {
+            "nvim-lua/plenary.nvim",  -- required
+            "sindrets/diffview.nvim", -- optional - Diff integration
+
+            -- Only one of these is needed.
+            "nvim-telescope/telescope.nvim", -- optional
+            -- "ibhagwan/fzf-lua",      -- optional
+            -- "echasnovski/mini.pick", -- optional
+            -- "folke/snacks.nvim",     -- optional
+        },
+        config = function()
+            vim.keymap.set("n", "<leader>g", ":Neogit<CR>")
+        end
     }
 }
