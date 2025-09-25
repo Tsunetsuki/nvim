@@ -131,7 +131,9 @@ return {
         config = function()
             local builtin = require("telescope.builtin")
             --ignore some file types. pt files are models and will cause telescope to freeze trying to preview
-            require('telescope').setup { defaults = { file_ignore_patterns = { "%.ipynb", "%.pt", "%.lock", "%.mp3", "%.png", "%.jpg", "%.jpeg" } } }
+            require('telescope').setup { defaults = {
+                file_ignore_patterns = { "%.ipynb", "%.pt", "%.lock", "%.mp3", "%.png", "%.jpg", "%.jpeg", "%.swp" }
+            }}
 
             vim.keymap.set("n", "<leader>pf", builtin.find_files, { desc = "Telescope find files" })
             vim.keymap.set("n", "<C-p>", builtin.git_files, { desc = "Telescope git files" })
@@ -686,17 +688,36 @@ return {
     -- },
     {
         "nvim-neorg/neorg",
-        lazy = false,  -- Disable lazy loading as some `lazy.nvim` distributions set `lazy = true` by default
-        version = "*", -- Pin Neorg to the latest stable release
+        lazy = false,
+        version = "*",
         config = function()
-            require("neorg").setup({
+            require("neorg").setup {
                 load = {
                     ["core.defaults"] = {},
-                    ["core.concealer"] = {}, -- We added this line!
-                }
-            })
-        end,
+                    ["core.concealer"] = {},
+                    ["core.dirman"] = {
+                        config = {
+                            workspaces = {
+                                notes = "~/notes",
+                            },
+                            default_workspace = "notes",
+                        },
+                    },
+                    ["core.qol.todo_items"] = {},
+                },
+            }
 
+            vim.api.nvim_create_autocmd("FileType", {
+                pattern = "norg",
+                callback = function()
+                    vim.wo.foldlevel = 99
+                    vim.wo.conceallevel = 2
+                    vim.keymap.set("n", "<C-Space>", "<Plug>(neorg.qol.todo-items.todo.task-cycle-reverse)",
+                        { buffer = true })
+                end,
+            })
+            -- vim.keymap.set("n", "<C-Space>", "<Plug>(neorg.qol.todo-items.todo.task-cycle-reverse)")
+        end,
     },
     {
         "nvim-treesitter/nvim-treesitter-context",
