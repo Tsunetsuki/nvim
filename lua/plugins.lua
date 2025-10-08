@@ -1,760 +1,1117 @@
+if vim.g.vscode then
+	return {
+		{
+			"kylechui/nvim-surround",
+			config = function()
+				require("nvim-surround").setup()
+			end,
+		},
+		{
+			"m4xshen/autoclose.nvim",
+			config = function()
+				require("autoclose").setup({
+					options = {
+						disable_when_touch = true,
+						touch_regex = "[%w(%[{]",
+						disable_command_mode = true,
+					},
+				})
+			end,
+		},
+	}
+end
+
+
 return {
-    {
-        "askfiy/visual_studio_code",
-        config = function()
-            require("visual_studio_code").setup({
-                mode = "dark"
-            })
-            vim.cmd.colorscheme("visual_studio_code")
-        end,
-    },
-    -- {
-    --     "rebelot/kanagawa.nvim",
-    --     config = function()
-    --         vim.cmd("colorscheme kanagawa")
-    --     end,
-    --
-    -- },
-    {
-        "nvim-treesitter/nvim-treesitter",
-        config = function()
-            require("nvim-treesitter.configs").setup({
-                ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "python", "typescript", "sql", "latex" },
+	{
+		"askfiy/visual_studio_code",
+		config = function()
+			require("visual_studio_code").setup({
+				mode = "dark",
+			})
+			vim.cmd.colorscheme("visual_studio_code")
+		end,
+	},
+	-- {
+	--     "rebelot/kanagawa.nvim",
+	--     config = function()
+	--         vim.cmd("colorscheme kanagawa")
+	--     end,
+	--
+	-- },
+	{
+		"nvim-treesitter/nvim-treesitter",
+		config = function()
+			require("nvim-treesitter.configs").setup({
+				ensure_installed = {
+					"c",
+					"lua",
+					"vim",
+					"vimdoc",
+					"query",
+					"markdown",
+					"markdown_inline",
+					"python",
+					"typescript",
+					"sql",
+					"latex",
+				},
 
-                -- Recommendation: set to false if you don"t have `tree-sitter` CLI installed locally
-                auto_install = true,
+				-- Recommendation: set to false if you don"t have `tree-sitter` CLI installed locally
+				auto_install = true,
 
-                highlight = {
-                    enable = true,
-                },
-                incremental_selection = {
-                    enable = true,
-                    keymaps = {
-                        init_selection = "<Leader>ss", -- set to `false` to disable one of the mappings
-                        node_incremental = "<Leader>si",
-                        scope_incremental = "<Leader>sc",
-                        node_decremental = "<Leader>sd",
-                    },
-                },
-                textobjects = {
-                    select = {
-                        enable = true,
+				highlight = {
+					enable = true,
+				},
+				incremental_selection = {
+					enable = true,
+					keymaps = {
+						init_selection = "<Leader>ss", -- set to `false` to disable one of the mappings
+						node_incremental = "<Leader>si",
+						scope_incremental = "<Leader>sc",
+						node_decremental = "<Leader>sd",
+					},
+				},
+				textobjects = {
+					select = {
+						enable = true,
 
-                        -- Automatically jump forward to textobj, similar to targets.vim
-                        lookahead = true,
+						-- Automatically jump forward to textobj, similar to targets.vim
+						lookahead = true,
 
-                        keymaps = {
-                            -- You can use the capture groups defined in textobjects.scm
-                            -- You can optionally set descriptions to the mappings (used in the desc parameter of
-                            -- nvim_buf_set_keymap) which plugins like which-key display
-                            ["af"] = "@function.outer",
-                            ["if"] = "@function.inner",
-                            ["ac"] = "@class.outer",
-                            ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
-                            -- You can also use captures from other query groups like `locals.scm`
-                            ["as"] = { query = "@scope", query_group = "locals", desc = "Select language scope" },
-                            ["aq"] = "@parameter.outer",
-                            ["iq"] = "@parameter.inner",
-                        },
-                        selection_modes = {
-                            ["@parameter.outer"] = "v", -- charwise
-                            ["@function.outer"] = "v",
-                            ["@class.outer"] = "v",
-                        },
-                        include_surrounding_whitespace = true,
-                    },
-                },
-            })
-        end,
-    },
-    {
-        "nvim-treesitter/nvim-treesitter-textobjects",
-    },
-    {
-        "williamboman/mason.nvim",
-        config = function()
-            require("mason").setup()
-        end,
-    },
-    {
-        "williamboman/mason-lspconfig.nvim",
-        dependencies = { "mason.nvim",
-            "neovim/nvim-lspconfig",
-        },
-        config = function()
-            require("mason-lspconfig").setup({
-                ensure_installed = { "clangd", "jsonls", "lua_ls", "pyright", "ts_ls" },
-                handlers = {
-                    function(server_name)
-                        if server_name == "ltex" then
-                            local path = vim.fn.stdpath("config") .. "/spell/en.utf-8.add"
-                            local words = {}
-                            for word in io.open(path, "r"):lines() do
-                                table.insert(words, word)
-                            end
+						keymaps = {
+							-- You can use the capture groups defined in textobjects.scm
+							-- You can optionally set descriptions to the mappings (used in the desc parameter of
+							-- nvim_buf_set_keymap) which plugins like which-key display
+							["af"] = "@function.outer",
+							["if"] = "@function.inner",
+							["ac"] = "@class.outer",
+							["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
+							-- You can also use captures from other query groups like `locals.scm`
+							["as"] = { query = "@scope", query_group = "locals", desc = "Select language scope" },
+							["aq"] = "@parameter.outer",
+							["iq"] = "@parameter.inner",
+						},
+						selection_modes = {
+							["@parameter.outer"] = "v", -- charwise
+							["@function.outer"] = "v",
+							["@class.outer"] = "v",
+						},
+						include_surrounding_whitespace = true,
+					},
+				},
+			})
+		end,
+	},
+	{
+		"nvim-treesitter/nvim-treesitter-textobjects",
+	},
+	--------------------------------------------------------LSP SECTION START
 
-                            require("lspconfig").ltex.setup({
-                                settings = {
-                                    ltex = {
-                                        disabledRules = {
-                                            ["en-US"] = {
-                                                "COMMA_PARENTHESIS_WHITESPACE",
-                                                "SMALL_NUMBER_OF",
-                                                "LARGE_NUMBER_OF",
-                                                "MORFOLOGIK_RULE_EN_US",
-                                                "WHETHER",
-                                                "Y_ALL",
-                                            }
-                                        },
-                                        dictionary = {
-                                            en = words,
-                                        },
+	{
+		"williamboman/mason.nvim",
+		-- config = function()
+		-- 	require("mason").setup()
+		-- end,
+	},
+	{
+		"neovim/nvim-lspconfig",
 
-                                    }
-                                }
-                            })
-                        else
-                            require("lspconfig")[server_name].setup({})
-                        end
-                    end,
-                }
-            })
-        end
-    },
-    {
-        "nvim-tree/nvim-web-devicons"
-    },
-    {
-        "nvim-telescope/telescope.nvim",
-        tag = "0.1.8",
-        dependencies = { "nvim-lua/plenary.nvim" },
-        config = function()
-            local builtin = require("telescope.builtin")
-            --ignore some file types. pt files are models and will cause telescope to freeze trying to preview
-            require('telescope').setup { defaults = {
-                file_ignore_patterns = { "%.ipynb", "%.pt", "%.lock", "%.mp3", "%.png", "%.jpg", "%.jpeg", "%.swp" }
-            }}
+		-- options copied from "manual setup" part of https://lsp-zero.netlify.app/docs/guide/lazy-loading-with-lazy-nvim.html
+		cmd = "LspInfo",
+		event = { "BufReadPre", "BufNewFile" },
+		dependencies = {
+			{ "hrsh7th/cmp-nvim-lsp" },
+		},
+		init = function()
+			-- Reserve a space in the gutter
+			-- This will avoid an annoying layout shift in the screen
+			vim.opt.signcolumn = "yes"
+		end,
+		config = function()
+			-- this works
+			vim.lsp.config["pyright"] = {
+				settings = {
+					python = {
+						analysis = {
+							autoImportCompletions = true,
+							diagnosticMode = "workspace", -- <-- analyze all files, not just open ones
+							autoSearchPaths = true,
+							useLibraryCodeForTypes = true,
+						},
+					},
+				},
+			}
 
-            vim.keymap.set("n", "<leader>pf", builtin.find_files, { desc = "Telescope find files" })
-            vim.keymap.set("n", "<C-p>", builtin.git_files, { desc = "Telescope git files" })
-            vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Telescope live grep" })
-            vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" })
-            vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope help tags" })
-            -- project search for string
-            vim.keymap.set("n", "<leader>ps", function()
-                builtin.grep_string({ search = vim.fn.input("Grep > ") })
-            end)
-        end,
-    },
-    {
-        "nvim-telescope/telescope-fzf-native.nvim",
-        build =
-        "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release"
-    },
+			local lsp_defaults = require("lspconfig").util.default_config
+			-- local lsp_defaults = vim.lsp.config().util.default_config
 
-    {
-        "VonHeikemen/lsp-zero.nvim",
-        branch = "v4.x",
-        config = false,
-    },
-    {
-        "neovim/nvim-lspconfig",
+			-- require("lspconfig").pyright.setup({
+			-- 	settings = {
+			-- 		python = {
+			-- 			analysis = {
+			-- 				autoImportCompletions = true,
+			-- 				diagnosticMode = "workspace", -- <-- analyze all files, not just open ones
+			-- 				autoSearchPaths = true,
+			-- 				useLibraryCodeForTypes = true,
+			-- 			},
+			-- 		},
+			-- 	},
+			-- })
 
-        -- options copied from "manual setup" part of https://lsp-zero.netlify.app/docs/guide/lazy-loading-with-lazy-nvim.html
-        cmd = "LspInfo",
-        event = { "BufReadPre", "BufNewFile" },
-        dependencies = {
-            { "hrsh7th/cmp-nvim-lsp" },
-        },
-        init = function()
-            -- Reserve a space in the gutter
-            -- This will avoid an annoying layout shift in the screen
-            vim.opt.signcolumn = "yes"
-        end,
-        config = function()
-            local lsp_defaults = require("lspconfig").util.default_config
+			-- vim.lsp.config("black")
+			vim.lsp.enable("pyright")
+			-- vim.lsp.enable("black")
 
-            -- Add cmp_nvim_lsp capabilities settings to lspconfig
-            -- This should be executed before you configure any language server
-            lsp_defaults.capabilities = vim.tbl_deep_extend(
-                "force",
-                lsp_defaults.capabilities,
-                require("cmp_nvim_lsp").default_capabilities()
-            )
-            vim.api.nvim_create_autocmd("LspAttach", {
-                desc = "LSP actions",
-                callback = function(event)
-                    local opts = { buffer = event.buf }
+			-- Add cmp_nvim_lsp capabilities settings to lspconfig
+			-- This should be executed before you configure any language server
+			lsp_defaults.capabilities =
+				vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
+			vim.api.nvim_create_autocmd("LspAttach", {
+				desc = "LSP actions",
+				callback = function(event)
+					local opts = { buffer = event.buf }
 
-                    vim.keymap.set("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
-                    vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
-                    vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
-                    vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
-                    vim.keymap.set("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
-                    vim.keymap.set("n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
-                    vim.keymap.set("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
-                    vim.keymap.set("n", "<F2>", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
-                    vim.keymap.set({ "n", "x", "i" }, "<F3>",
-                        '<cmd>lua vim.lsp.buf.format({async = true, filter = function(client_) return client_.name ~= "ts_ls" end;})<cr>',
-                        opts)
-                    vim.keymap.set("n", " ca", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
-                end,
-            })
+					vim.keymap.set("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
+					vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
+					vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
+					vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
+					vim.keymap.set("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
+					vim.keymap.set("n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
+					vim.keymap.set("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
+					vim.keymap.set("n", "<F2>", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
+					vim.keymap.set(
+						{ "n", "x", "i" },
+						"<F3>",
+						'<cmd>lua vim.lsp.buf.format({async = true, filter = function(client_) return client_.name ~= "ts_ls" end;})<cr>',
+						opts
+					)
+					vim.keymap.set("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
+				end,
+			})
+		end,
+	},
+	{
+		-- "williamboman/mason-lspconfig.nvim",
+		-- dependencies = { "mason.nvim", "neovim/nvim-lspconfig" },
+		-- config = function()
+		-- 	require("mason").setup()
+		--
+		-- 	require("mason-lspconfig").setup({
+		-- 		ensure_installed = { "clangd", "jsonls", "lua_ls", "pyright", "ts_ls" },
+		-- 		automatic_installation = true,
+		--
+		-- 		-- handlers = {
+		-- 		-- 	function(server_name)
+		-- 		-- 		if server_name == "ltex" then
+		-- 		-- 			local path = vim.fn.stdpath("config") .. "/spell/en.utf-8.add"
+		-- 		-- 			local words = {}
+		-- 		-- 			for word in io.open(path, "r"):lines() do
+		-- 		-- 				table.insert(words, word)
+		-- 		-- 			end
+		-- 		--
+		-- 		-- 			require("lspconfig").ltex.setup({
+		-- 		-- 				settings = {
+		-- 		-- 					ltex = {
+		-- 		-- 						disabledRules = {
+		-- 		-- 							["en-US"] = {
+		-- 		-- 								"COMMA_PARENTHESIS_WHITESPACE",
+		-- 		-- 								"SMALL_NUMBER_OF",
+		-- 		-- 								"LARGE_NUMBER_OF",
+		-- 		-- 								"MORFOLOGIK_RULE_EN_US",
+		-- 		-- 								"WHETHER",
+		-- 		-- 								"Y_ALL",
+		-- 		-- 							},
+		-- 		-- 						},
+		-- 		-- 						dictionary = {
+		-- 		-- 							en = words,
+		-- 		-- 						},
+		-- 		-- 					},
+		-- 		-- 				},
+		-- 		-- 			})
+		-- 		-- 		else
+		-- 		-- 			require("lspconfig")[server_name].setup({})
+		-- 		-- 		end
+		-- 		-- 	end,
+		-- 		-- },
+		-- 	})
+		-- end,
+	},
+	{
+		"nvimtools/none-ls.nvim",
+		dependencies = {
+			"nvimtools/none-ls-extras.nvim",
+		},
+		-- config = function()
+		-- 	local null_ls = require("null-ls")
+		-- 	null_ls.setup({
+		-- 		sources = {
+		-- 			-- require("none-ls.diagnostics.eslint"), -- requires none-ls-extras.nvim
+		-- 			-- null_ls.builtins.formatting.prettier,
+		-- 			-- -- null_ls.builtins.formatting.prettierd,
+		-- 			null_ls.builtins.formatting.black,
+		-- 			-- null_ls.builtins.formatting.isort, -- for Python imports
+		-- 			-- null_ls.builtins.formatting.shfmt,
+		-- 			-- null_ls.builtins.formatting.lua_ls
+		-- 			-- null_ls.builtins.formatting.stylua,
+		--
+		-- 			-- null_ls.builtins.diagnostics.shellcheck,
+		-- 			-- null_ls.builtins.code_actions.shellcheck,
+		-- 		},
+		-- 	})
+		-- end,
+	},
 
-            -- These are just examples. Replace them with the language
-            -- servers you have installed in your system
-            require("lspconfig").gleam.setup({})
-            require("lspconfig").ocamllsp.setup({})
-        end
-    },
-    {
-        "hrsh7th/cmp-nvim-lsp"
-    },
-    {
-        "hrsh7th/nvim-cmp",
-        config = function()
-            ---
-            -- Autocompletion setup
-            ---
-            local cmp = require("cmp")
+	{
+		"jay-babu/mason-null-ls.nvim",
+		event = { "BufReadPre", "BufNewFile" },
+		dependencies = {
+			"williamboman/mason.nvim",
+			"nvimtools/none-ls.nvim",
+		},
+		config = function()
+			-- require("your.null-ls.config") -- require your null-ls config here (example below)
+			-- require("nonels").setup()
+			require("mason").setup()
 
-            cmp.setup({
-                sources = {
-                    { name = "path" },
-                    { name = "nvim_lsp" },
-                    { name = "luasnip", keyword_length = 2 },
-                    { name = "buffer",  keyword_length = 3 },
-                },
-                window = {
-                    completion = cmp.config.window.bordered(),
-                    documentation = cmp.config.window.bordered(),
-                },
-                snippet = {
-                    expand = function(args)
-                        -- You need Neovim v0.10 to use vim.snippet
-                        vim.snippet.expand(args.body)
-                        -- require('luasnip').lsp_expand(args.body)
-                    end,
-                },
-                mapping = cmp.mapping.preset.insert({
-                    ["<C-b>"] = cmp.mapping.scroll_docs(-4),
-                    ["<C-f>"] = cmp.mapping.scroll_docs(4),
-                    ["<C-s>"] = cmp.mapping.complete(), -- ctrl-space does not work (seems to be due to cmd)
-                    ["<CR>"] = cmp.mapping.confirm({ select = true }),
-                }),
-                completion = {
-                    completeopt = "menu,menuone,noinsert"
-                }
-            })
-        end
-    },
-    {
-        "NMAC427/guess-indent.nvim",
-        config = function()
-            require("guess-indent").setup {}
-        end,
-    },
-    {
-        -- closes ()[]{}"" etc.
-        "m4xshen/autoclose.nvim",
-        config = function()
-            require("autoclose").setup({
-                options = {
-                    disable_when_touch = true,
-                    touch_regex = "[%w(%[{]",
-                    disable_command_mode = true,
-                }
-            })
-        end,
-    },
-    {
-        "nvimtools/none-ls.nvim",
-        dependencies = {
-            "nvimtools/none-ls-extras.nvim",
-        },
-    },
-    {
-        "linux-cultist/venv-selector.nvim",
-        dependencies = {
-            "neovim/nvim-lspconfig",
-            "mfussenegger/nvim-dap", "mfussenegger/nvim-dap-python", --optional
-            { "nvim-telescope/telescope.nvim", branch = "0.1.x", dependencies = { "nvim-lua/plenary.nvim" } },
-        },
-        lazy = false,
-        branch = "regexp", -- This is the regexp branch, use this for the new version
-        config = function()
-            require("venv-selector").setup({
-                settings = {
-                    options = {
-                        -- notify_user_on_venv_activation = true,
-                    }
-                }
+			require("mason-null-ls").setup({
+				ensure_installed = {"black"},
+				automatic_installation = true,
+				-- automatic_setup = true,
+				handlers = {},
+			})
 
+			local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 
+			require("null-ls").setup({require("null-ls").builtins.formatting.black})
 
-            })
+			local null_ls = require("null-ls")
+			null_ls.setup({
+				sources = {
+					-- require("none-ls.diagnostics.eslint"), -- requires none-ls-extras.nvim
+					-- null_ls.builtins.formatting.prettier,
+					-- -- null_ls.builtins.formatting.prettierd,
+					null_ls.builtins.formatting.black,
+					-- null_ls.builtins.formatting.isort, -- for Python imports
+					-- null_ls.builtins.formatting.shfmt,
+					-- null_ls.builtins.formatting.lua_ls
+					-- null_ls.builtins.formatting.stylua,
 
-            function ExecuteCurrentPythonFile()
-                local file_path = vim.fn.expand('%:p')
-                local dir_path = vim.fn.getcwd() --vim.fn.expand('%:p:h')
-                local venv = os.getenv("VIRTUAL_ENV") or os.getenv("CONDA_PREFIX")
+					-- null_ls.builtins.diagnostics.shellcheck,
+					-- null_ls.builtins.code_actions.shellcheck,
+				},
+				-- you can reuse a shared lspconfig on_attach callback here
+				on_attach = function(client, bufnr)
+					if client.supports_method("textDocument/formatting") then
+						vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
+						-- gets executed when file is saved
+						vim.api.nvim_create_autocmd("BufWritePre", {
+							group = augroup,
+							buffer = bufnr,
+							callback = function()
+								-- on 0.8, you should use vim.lsp.buf.format({ bufnr = bufnr }) instead
+								-- on later neovim version, you should use vim.lsp.buf.format({ async = false }) instead
+								vim.lsp.buf.format({
+									async = false,
+									-- ts_ls conflicts with eslint/prettier, e.g. puts spaces between empty {}
+									filter = function(client_)
+										return client_.name ~= "ts_ls"
+									end,
+								})
+							end,
+						})
+					end
+				end,
+			})
+		end,
+	},
+	--------------------------------------------------------LSP SECTION END
+	{
+		"nvim-tree/nvim-web-devicons",
+	},
+	{
+		"nvim-telescope/telescope.nvim",
+		tag = "0.1.8",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		config = function()
+			local builtin = require("telescope.builtin")
+			--ignore some file types. pt files are models and will cause telescope to freeze trying to preview
+			require("telescope").setup({
+				defaults = {
+					file_ignore_patterns = {
+						-- "%.ipynb",
+						"%.pt",
+						"%.lock",
+						"%.mp3",
+						"%.png",
+						"%.jpg",
+						"%.jpeg",
+						"%.swp",
+					},
+				},
+			})
 
-                if venv == nil then
-                    return
-                end
+			vim.keymap.set("n", "<leader>pf", builtin.find_files, { desc = "Telescope find files" })
+			vim.keymap.set("n", "<C-p>", builtin.git_files, { desc = "Telescope git files" })
+			vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Telescope live grep" })
+			vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" })
+			vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope help tags" })
+			-- project search for string
+			vim.keymap.set("n", "<leader>ps", function()
+				builtin.grep_string({ search = vim.fn.input("Grep > ") })
+			end)
+		end,
+	},
+	{
+		"nvim-telescope/telescope-fzf-native.nvim",
+		build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release",
+	},
 
-                local venv_activation_string
-                if string.find(venv, "conda", 1, true) then
-                    venv_activation_string = string.format("conda activate %s", venv)
-                else
-                    venv_activation_string = string.format("%s\\Scripts\\activate.bat", venv)
-                end
+	-- lsp-zero: seems redundant due to nonels
+	-- {
+	-- 	"VonHeikemen/lsp-zero.nvim",
+	-- 	branch = "v4.x",
+	-- 	config = false,
+	-- },
 
-                vim.cmd("vsplit | terminal")
-                vim.fn.feedkeys("i", "n")
-                vim.fn.feedkeys(string.format('cd %s && set PYTHONPATH=. && %s && python %s\n',
-                    dir_path,
-                    venv_activation_string,
-                    file_path))
-            end
+	{
+		"hrsh7th/cmp-nvim-lsp",
+	},
+	{
+		"hrsh7th/nvim-cmp",
+		config = function()
+			---
+			-- Autocompletion setup
+			---
+			local cmp = require("cmp")
 
-            vim.api.nvim_set_keymap('n', '<leader><F5>', [[:lua ExecuteCurrentPythonFile()<CR>]],
-                { noremap = true, silent = true })
-            -- vim.api.nvim_set_keymap('n', '<leader><F5>', function() ExecuteCurrentPythonFile() end,
-            --     { noremap = true, silent = true })
-        end,
-        keys = {
-            { '<leader>vs', '<cmd>VenvSelect<cr>' },
-        },
-    },
-    {
-        "none-ls-extras.nvim"
-    },
-    {
-        "nvimtools/none-ls.nvim",
-        config = function()
-            local null_ls = require("null-ls")
-            local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
+			cmp.setup({
+				sources = {
+					{ name = "path" },
+					{ name = "nvim_lsp" },
+					{ name = "luasnip", keyword_length = 2 },
+					{ name = "buffer", keyword_length = 3 },
+				},
+				window = {
+					completion = cmp.config.window.bordered(),
+					documentation = cmp.config.window.bordered(),
+				},
+				snippet = {
+					expand = function(args)
+						-- You need Neovim v0.10 to use vim.snippet
+						vim.snippet.expand(args.body)
+						-- require('luasnip').lsp_expand(args.body)
+					end,
+				},
+				mapping = cmp.mapping.preset.insert({
+					["<C-b>"] = cmp.mapping.scroll_docs(-4),
+					["<C-f>"] = cmp.mapping.scroll_docs(4),
+					["<C-s>"] = cmp.mapping.complete(), -- ctrl-space does not work (seems to be due to cmd)
+					["<CR>"] = cmp.mapping.confirm({ select = true }),
+				}),
+				completion = {
+					completeopt = "menu,menuone,noinsert",
+				},
+			})
+		end,
+	},
+	{
+		"NMAC427/guess-indent.nvim",
+		config = function()
+			require("guess-indent").setup({})
+		end,
+	},
+	{
+		-- closes ()[]{}"" etc.
+		"m4xshen/autoclose.nvim",
+		config = function()
+			require("autoclose").setup({
+				options = {
+					disable_when_touch = true,
+					touch_regex = "[%w(%[{]",
+					disable_command_mode = true,
+				},
+			})
+		end,
+	},
+	{
+		-- venv-selector is disabled because it breaks none-ls
+		
+		-- "linux-cultist/venv-selector.nvim",
+		--   dependencies = {
+		-- 	"neovim/nvim-lspconfig",
+		-- 	{ "nvim-telescope/telescope.nvim", branch = "0.1.x", dependencies = { "nvim-lua/plenary.nvim" } }, -- optional: you can also use fzf-lua, snacks, mini-pick instead.
+		--   },
+		--   ft = "python", -- Load when opening Python files
+		--   keys = {
+		-- 	{ "<leader>v", "<cmd>VenvSelect<cr>" }, -- Open picker on keymap
+		--   },
+		--   opts = { 
+		-- 	search = {},
+		-- 	options = {
+		-- 		notify_user_on_venv_activation = true, -- doesnt work anymore
+		-- 		on_venv_activate_callback = function(venv_path, venv_python)
+		-- 		-- Re-source null-ls after venv change
+		-- 			-- Reconfigure none-ls after venv change
+		--
+		-- 		local null_ls = require("null-ls")
+		-- 		null_ls.setup({ sources = { null_ls.builtins.formatting.black }})
+		-- 		vim.notify("Reloaded null-ls with new venv", vim.log.levels.INFO)
+		-- 	  end,
+		--
+  -- require_lsp_activation = true
+		-- 	} 
+		--   },
+		--   
+		-- 	
+		--
+		--
+		-- -- config = function()
+		-- -- 	require("venv-selector").setup({
+		-- -- 		settings = {
+		-- -- 			options = {
+		-- -- 			},
+		-- -- 		},
+		-- -- 	})
+		-- --
+		-- -- 	-- function ExecuteCurrentPythonFile()
+		-- -- 	-- 	local file_path = vim.fn.expand("%:p")
+		-- -- 	-- 	local dir_path = vim.fn.getcwd() --vim.fn.expand('%:p:h')
+		-- -- 	-- 	local venv = os.getenv("VIRTUAL_ENV") or os.getenv("CONDA_PREFIX")
+		-- -- 	--
+		-- -- 	-- 	if venv == nil then
+		-- -- 	-- 		return
+		-- -- 	-- 	end
+		-- -- 	--
+		-- -- 	-- 	local venv_activation_string
+		-- -- 	-- 	if string.find(venv, "conda", 1, true) then
+		-- -- 	-- 		venv_activation_string = string.format("conda activate %s", venv)
+		-- -- 	-- 	else
+		-- -- 	-- 		venv_activation_string = string.format("%s\\Scripts\\activate.bat", venv)
+		-- -- 	-- 	end
+		-- -- 	--
+		-- -- 	-- 	vim.cmd("vsplit | terminal")
+		-- -- 	-- 	vim.fn.feedkeys("i", "n")
+		-- -- 	-- 	vim.fn.feedkeys(
+		-- -- 	-- 		string.format(
+		-- -- 	-- 			"cd %s && set PYTHONPATH=. && %s && python %s\n",
+		-- -- 	-- 			dir_path,
+		-- -- 	-- 			venv_activation_string,
+		-- -- 	-- 			file_path
+		-- -- 	-- 		)
+		-- -- 	-- 	)
+		-- -- 	-- end
+		-- -- 	--
+		-- -- 	-- vim.api.nvim_set_keymap(
+		-- -- 	-- 	"n",
+		-- -- 	-- 	"<leader><F5>",
+		-- -- 	-- 	[[:lua ExecuteCurrentPythonFile()<CR>]],
+		-- -- 	-- 	{ noremap = true, silent = true }
+		-- -- 	-- )
+		-- -- 	-- vim.api.nvim_set_keymap('n', '<leader><F5>', function() ExecuteCurrentPythonFile() end,
+		-- -- 	--     { noremap = true, silent = true })
+		-- -- end,
+	},
 
-            null_ls.setup({
-                sources = {
-                    require("none-ls.diagnostics.eslint"), -- requires none-ls-extras.nvim
-                    null_ls.builtins.formatting.prettier,
-                    -- null_ls.builtins.formatting.prettierd,
-                    null_ls.builtins.formatting.black,
-                },
-                -- you can reuse a shared lspconfig on_attach callback here
-                on_attach = function(client, bufnr)
-                    if client.supports_method("textDocument/formatting") then
-                        vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
-                        -- gets executed when file is saved
-                        vim.api.nvim_create_autocmd("BufWritePre", {
-                            group = augroup,
-                            buffer = bufnr,
-                            callback = function()
-                                -- on 0.8, you should use vim.lsp.buf.format({ bufnr = bufnr }) instead
-                                -- on later neovim version, you should use vim.lsp.buf.format({ async = false }) instead
-                                vim.lsp.buf.format({
-                                    async = false,
-                                    -- ts_ls conflicts with eslint/prettier, e.g. puts spaces between empty {}
-                                    filter = function(client_) return client_.name ~= "ts_ls" end
-                                })
-                            end,
-                        })
-                    end
-                end,
-            })
-        end,
-    },
-    {
-        "numToStr/Comment.nvim",
-        config = function()
-            require("Comment").setup()
-        end,
-    },
-    {
-        "kylechui/nvim-surround",
-        config = function()
-            require("nvim-surround").setup()
-        end,
-    },
-    {
-        "windwp/nvim-ts-autotag",
-        config = function()
-            require("nvim-ts-autotag").setup({
-                opts = {
-                    -- Defaults
-                    enable_close = true,          -- Auto close tags
-                    enable_rename = true,         -- Auto rename pairs of tags
-                    enable_close_on_slash = false -- Auto close on trailing </
-                },
-                -- Also override individual filetype configs, these take priority.
-                -- Empty by default, useful if one of the "opts" global settings
-                -- doesn't work well in a specific filetype
-                per_filetype = {
-                    ["html"] = {
-                        enable_close = false
-                    }
-                }
-            })
-        end,
-    },
-    -- {
-    --     "ThePrimeagen/harpoon",
-    --     branch = "harpoon2",
-    --     dependencies = { "nvim-lua/plenary.nvim" },
-    --     config = function()
-    --         local harpoon = require("harpoon")
-    --         harpoon:setup({
-    --             settings = {
-    --                 save_on_toggle = true,
-    --             }
-    --         })
-    --
-    --         vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
-    --         vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
-    --
-    --         vim.keymap.set("n", "<C-h>", function() harpoon:list():select(1) end)
-    --         vim.keymap.set("n", "<C-t>", function() harpoon:list():select(2) end)
-    --         vim.keymap.set("n", "<C-n>", function() harpoon:list():select(3) end)
-    --         vim.keymap.set("n", "<C-s>", function() harpoon:list():select(4) end)
-    --
-    --         -- Toggle previous & next buffers stored within Harpoon list
-    --         vim.keymap.set("n", "<C-S-P>", function() harpoon:list():prev() end)
-    --         vim.keymap.set("n", "<C-S-N>", function() harpoon:list():next() end)
-    --     end,
-    -- },
-    {
-        "stevanmilic/nvim-lspimport",
-        config = function()
-            vim.keymap.set("n", "<leader>i", require("lspimport").import, { noremap = true })
-        end,
-    },
-    {
-        "rmagatti/auto-session",
-        lazy = false,
+	{
+		"numToStr/Comment.nvim",
+		config = function()
+			require("Comment").setup()
+		end,
+	},
+	{
+		"kylechui/nvim-surround",
+		config = function()
+			require("nvim-surround").setup()
+		end,
+	},
+	{
+		"windwp/nvim-ts-autotag",
+		config = function()
+			require("nvim-ts-autotag").setup({
+				opts = {
+					-- Defaults
+					enable_close = true, -- Auto close tags
+					enable_rename = true, -- Auto rename pairs of tags
+					enable_close_on_slash = false, -- Auto close on trailing </
+				},
+				-- Also override individual filetype configs, these take priority.
+				-- Empty by default, useful if one of the "opts" global settings
+				-- doesn't work well in a specific filetype
+				per_filetype = {
+					["html"] = {
+						enable_close = false,
+					},
+				},
+			})
+		end,
+	},
 
-        ---enables autocomplete for opts
-        ---@module "auto-session"
-        ---@diagnostic disable-next-line: undefined-doc-name
-        ---@type AutoSession.Config
-        opts = {
-            suppressed_dirs = { "~/", "~/Projects", "~/Downloads", "/" },
-            -- log_level = "debug",
-        }
-    },
-    -- {
-    --     "luk400/vim-jukit",
-    --     config = function()
-    --         vim.g._jukit_python_os_cmd = 'python';
-    --     end,
-    --     -- ft = {"py", "ipynb"},
-    -- },
-    -- {
-    --     "dccsillag/magma-nvim",
-    --     lazy = false,
-    --     config = function()
-    --         require("magma-nvim").setup()
-    --         vim.keymap.set('n', '<Leader>r', [[:MagmaEvaluateOperator<CR>]],
-    --             { noremap = true, silent = true, expr = true })
-    --         vim.keymap.set('n', '<Leader>rr', [[:MagmaEvaluateLine<CR>]], { noremap = true, silent = true })
-    --         vim.keymap.set('x', '<Leader>r', [[:<C-u>MagmaEvaluateVisual<CR>]], { noremap = true, silent = true })
-    --         vim.keymap.set('n', '<Leader>rc', [[:MagmaReevaluateCell<CR>]], { noremap = true, silent = true })
-    --         vim.keymap.set('n', '<Leader>rd', [[:MagmaDelete<CR>]], { noremap = true, silent = true })
-    --         vim.keymap.set('n', '<Leader>ro', [[:MagmaShowOutput<CR>]], { noremap = true, silent = true })
-    --
-    --         vim.g.magma_automatically_open_output = false
-    --         vim.g.magma_image_provider = "ueberzug"
-    --     end
-    -- },
-    {
-        "folke/trouble.nvim",
-        opts = {}, -- for default options, refer to the configuration section for custom setup.
-        cmd = "Trouble",
-        keys = {
-            {
-                "<leader>xx",
-                "<cmd>Trouble diagnostics toggle<cr>",
-                desc = "Diagnostics (Trouble)",
-            },
-            {
-                "<leader>xX",
-                "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
-                desc = "Buffer Diagnostics (Trouble)",
-            },
-            {
-                "<leader>cs",
-                "<cmd>Trouble symbols toggle focus=false<cr>",
-                desc = "Symbols (Trouble)",
-            },
-            {
-                "<leader>cl",
-                "<cmd>Trouble lsp toggle focus=false win.position=right<cr>",
-                desc = "LSP Definitions / references / ... (Trouble)",
-            },
-            {
-                "<leader>xL",
-                "<cmd>Trouble loclist toggle<cr>",
-                desc = "Location List (Trouble)",
-            },
-            {
-                "<leader>xQ",
-                "<cmd>Trouble qflist toggle<cr>",
-                desc = "Quickfix List (Trouble)",
-            },
-        },
-    },
-    {
-        "benlubas/molten-nvim",
-        version = "^1.0.0", -- use version <2.0.0 to avoid breaking changes
-        build = ":UpdateRemotePlugins",
-        init = function()
-            -- this is an example, not a default. Please see the readme for more configuration options
-            vim.g.molten_output_win_max_height = 12
-            -- activate the following line to change neovim's python env, but be careful that this env include ALL necessary packages, even those required by other neovim plugins!
-            -- vim.g.python3_host_prog = vim.fn.expand("C:\\Users\\lpaal\\miniconda3\\envs\\neovim\\python")
-            vim.keymap.set("n", "<localleader>ip", function()
-                local venv = os.getenv("VIRTUAL_ENV") or os.getenv("CONDA_PREFIX")
-                print(venv)
-                if venv ~= nil then
-                    -- in the form of /home/benlubas/.virtualenvs/VENV_NAME
-                    venv = string.match(venv, "/.+/(.+)")
-                    vim.cmd(("MoltenInit %s"):format(venv))
-                else
-                    vim.cmd("MoltenInit python3")
-                end
-            end, { desc = "Initialize Molten for python3", silent = true })
+	-- nvim-lspimport: not working
+	-- {
+	-- 	"stevanmilic/nvim-lspimport",
+	-- 	config = function()
+	-- 		vim.keymap.set("n", "<leader>i", require("lspimport").import, { noremap = true })
+	-- 	end,
+	-- },
 
-            vim.keymap.set("n", "<localleader>mi", ":MoltenInit<CR>",
-                { silent = true, desc = "Initialize the plugin" })
-            vim.keymap.set("n", "<localleader>e", ":MoltenEvaluateOperator<CR>",
-                { silent = true, desc = "run operator selection" })
-            vim.keymap.set("n", "<localleader>rl", ":MoltenEvaluateLine<CR>",
-                { silent = true, desc = "evaluate line" })
-            vim.keymap.set("n", "<localleader>rr", ":MoltenReevaluateCell<CR>",
-                { silent = true, desc = "re-evaluate cell" })
-            vim.keymap.set("v", "<localleader>r", ":<C-u>MoltenEvaluateVisual<CR>gv",
-                { silent = true, desc = "evaluate visual selection" })
-        end,
-    },
-    -- {
-    --     "lervag/vimtex",
-    --     lazy = false, -- we don't want to lazy load VimTeX
-    --     -- tag = "v2.15", -- uncomment to pin to a specific release
-    --     init = function()
-    --         -- VimTeX configuration goes here, e.g.
-    --
-    --         -- vim.g.vimtex_view_general_viewer = 'okular'
-    --         -- vim.g.vimtex_view_general_options = '--unique file:@pdf#src:@line@tex'
-    --
-    --         vim.g.vimtex_view_general_viewer = 'sumatraPDF'
-    --         vim.g.vimtex_view_general_options = '-reuse-instance @pdf'
-    --
-    --         -- vim.g.vimtex_compiler_method = "latexpdf"
-    --         -- spellcheck
-    --
-    --         -- vim.keymap.set("n", "<leader>lr", function()
-    --         --     local cwd = vim.fn.getcwd()
-    --         --     vim.cmd('!start cmd.exe /K "cd ' .. cwd .. ' && pdflatex Thesis.tex"')
-    --         -- end, { silent = true })
-    --
-    --
-    --         vim.api.nvim_create_user_command('RunPdfLatex', function()
-    --             local file = vim.fn.expand('%')
-    --             if file == '' then
-    --                 print("No file to compile!")
-    --                 return
-    --             end
-    --             print("Running pdflatex on " .. file)
-    --             vim.fn.jobstart({ 'pdflatex', file }, {
-    --                 stdout_buffered = true,
-    --                 stderr_buffered = true,
-    --                 on_stdout = function(_, data)
-    --                     if data then
-    --                         print(table.concat(data, '\n'))
-    --                     end
-    --                 end,
-    --                 on_stderr = function(_, data)
-    --                     if data then
-    --                         vim.notify(table.concat(data, '\n'), vim.log.levels.ERROR)
-    --                     end
-    --                 end,
-    --                 on_exit = function(_, code)
-    --                     if code == 0 then
-    --                         print("pdflatex compilation succeeded.")
-    --                     else
-    --                         print("pdflatex compilation failed.")
-    --                     end
-    --                 end,
-    --             })
-    --         end, { desc = "Run pdflatex on the current file" })
-    --
-    --         -- shortcut to rerun pdflatex on current file
-    --         vim.api.nvim_set_keymap('n', '<localleader>lr', ':RunPdfLatex<CR>', { noremap = true, silent = true })
-    --
-    --
-    --         vim.api.nvim_create_user_command("CheckThesis", function()
-    --             local cmd =
-    --             [[java -jar "C:\Program Files\textidote\textidote.jar" --output html Thesis.tex > "C:\Users\lpaal\Downloads\report.html" & cmd /c start "" "C:\Users\lpaal\Downloads\report.html"]]
-    --             vim.fn.system(cmd)
-    --             print("Textidote check complete! Report opened.")
-    --         end, {})
-    --
-    --         vim.api.nvim_set_keymap('n', '<localleader>lg', ':CheckThesis<CR>', { noremap = true, silent = true })
-    --
-    --         --
-    --         -- vim.g.vimtex_view_general_options_latexmk = '-reuse-instance'
-    --         -- vim.g.vimtex_view_method = "sumatrapdf"
-    --     end
-    -- },
-    {
-        "norcalli/nvim-colorizer.lua",
-        -- preview hex color values
-        config = function()
-            require("colorizer").setup()
-        end,
-    },
-    {
-        -- multiline cursors
-        "mg979/vim-visual-multi",
-    }
-    ,
-    -- {
-    --     'stevearc/oil.nvim',
-    --     ---@module 'oil'
-    --     ---@type oil.SetupOpts
-    --     opts = {},
-    --     -- Optional dependencies
-    --     dependencies = { { "echasnovski/mini.icons", opts = {} } },
-    --     -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
-    --     -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
-    --     lazy = false,
-    --     config = function()
-    --         require("oil").setup()
-    --     end,
-    -- }
-    {
-        "kiyoon/treesitter-indent-object.nvim",
-        keys = {
-            {
-                "ai",
-                function() require 'treesitter_indent_object.textobj'.select_indent_outer() end,
-                mode = { "x", "o" },
-                desc = "Select context-aware indent (outer)",
-            },
-            {
-                "aI",
-                function() require 'treesitter_indent_object.textobj'.select_indent_outer(true) end,
-                mode = { "x", "o" },
-                desc = "Select context-aware indent (outer, line-wise)",
-            },
-            {
-                "ii",
-                function() require 'treesitter_indent_object.textobj'.select_indent_inner() end,
-                mode = { "x", "o" },
-                desc = "Select context-aware indent (inner, partial range)",
-            },
-            {
-                "iI",
-                function() require 'treesitter_indent_object.textobj'.select_indent_inner(true, 'V') end,
-                mode = { "x", "o" },
-                desc = "Select context-aware indent (inner, entire range) in line-wise visual mode",
-            },
-        },
-    },
-    -- {
-    --     "valentjn/ltex-ls",
-    --     config = function()
-    --         local path = vim.fn.stdpath("config") .. "/spell/en.utf-8.add"
-    --         local words = {}
-    --
-    --         for word in io.open(path, "r"):lines() do
-    --             table.insert(words, word)
-    --         end
-    --
-    --         require 'lspconfig'.ltex.setup {
-    --             settings = {
-    --                 ltex = {
-    --                     language = "en",                    -- Set the language (e.g., "en" for English)
-    --                     diagnosticSeverity = "information", -- Adjust severity levels
-    --                     --  "C:\\Users\\lpaal\\AppData\\Local\\nvim\\spell\\en.utf-8.add"llk
-    --                     dictionary = {
-    --                         en = words,
-    --                     },
-    --                 }
-    --             }
-    --         }
-    --     end
-    -- },
-    {
-        "nvim-neorg/neorg",
-        lazy = false,
-        version = "*",
-        config = function()
-            require("neorg").setup {
-                load = {
-                    ["core.defaults"] = {},
-                    ["core.concealer"] = {},
-                    ["core.dirman"] = {
-                        config = {
-                            workspaces = {
-                                notes = "~/notes",
-                            },
-                            default_workspace = "notes",
-                        },
-                    },
-                    ["core.qol.todo_items"] = {},
-                },
-            }
+	{
+		"kiyoon/python-import.nvim",
+		-- build = "pipx install . --force",
+		build = "uv tool install . --force --reinstall",
+		keys = {
+			{
+				"<M-CR>",
+				function()
+					require("python_import.api").add_import_current_word_and_notify()
+				end,
+				mode = { "i", "n" },
+				silent = true,
+				desc = "Add python import",
+				ft = "python",
+			},
+			{
+				"<M-CR>",
+				function()
+					require("python_import.api").add_import_current_selection_and_notify()
+				end,
+				mode = "x",
+				silent = true,
+				desc = "Add python import",
+				ft = "python",
+			},
+			{
+				"<space>i",
+				function()
+					require("python_import.api").add_import_current_word_and_move_cursor()
+				end,
+				mode = "n",
+				silent = true,
+				desc = "Add python import and move cursor",
+				ft = "python",
+			},
+			{
+				"<space>i",
+				function()
+					require("python_import.api").add_import_current_selection_and_move_cursor()
+				end,
+				mode = "x",
+				silent = true,
+				desc = "Add python import and move cursor",
+				ft = "python",
+			},
+			{
+				"<space>tr",
+				function()
+					require("python_import.api").add_rich_traceback()
+				end,
+				silent = true,
+				desc = "Add rich traceback",
+				ft = "python",
+			},
+		},
+		opts = {
+			-- Example 1:
+			-- Default behaviour for `tqdm` is `from tqdm.auto import tqdm`.
+			-- If you want to change it to `import tqdm`, you can set `import = {"tqdm"}` and `import_from = {tqdm = vim.NIL}` here.
+			-- If you want to change it to `from tqdm import tqdm`, you can set `import_from = {tqdm = "tqdm"}` here.
 
-            vim.api.nvim_create_autocmd("FileType", {
-                pattern = "norg",
-                callback = function()
-                    vim.wo.foldlevel = 99
-                    vim.wo.conceallevel = 2
-                    vim.keymap.set("n", "<C-Space>", "<Plug>(neorg.qol.todo-items.todo.task-cycle-reverse)",
-                        { buffer = true })
-                end,
-            })
-            -- vim.keymap.set("n", "<C-Space>", "<Plug>(neorg.qol.todo-items.todo.task-cycle-reverse)")
-        end,
-    },
-    {
-        "nvim-treesitter/nvim-treesitter-context",
-        config = function()
-            require 'treesitter-context'.setup {
-                enable = true,           -- Enable this plugin (Can be enabled/disabled later via commands)
-                multiwindow = false,     -- Enable multiwindow support.
-                max_lines = 0,           -- How many lines the window should span. Values <= 0 mean no limit.
-                min_window_height = 0,   -- Minimum editor window height to enable context. Values <= 0 mean no limit.
-                line_numbers = true,
-                multiline_threshold = 1, -- Maximum number of lines to show for a single context
-                trim_scope = 'outer',    -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
-                mode = 'cursor',         -- Line used to calculate context. Choices: 'cursor', 'topline'
-                -- Separator between context and content. Should be a single character string, like '-'.
-                -- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
-                -- separator = nil,
-                separator = '-',
-                zindex = 20,     -- The Z-index of the context window
-                on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
-            }
-        end
+			-- Example 2:
+			-- Default behaviour for `logger` is `import logging`, ``, `logger = logging.getLogger(__name__)`.
+			-- If you want to change it to `import my_custom_logger`, ``, `logger = my_custom_logger.get_logger()`,
+			-- you can set `statement_after_imports = {logger = {"import my_custom_logger", "", "logger = my_custom_logger.get_logger()"}}` here.
+			extend_lookup_table = {
+				---@type string[]
+				import = {
+					-- "tqdm",
+				},
 
-    },
-    {
-        "NeogitOrg/neogit",
-        dependencies = {
-            "nvim-lua/plenary.nvim",  -- required
-            "sindrets/diffview.nvim", -- optional - Diff integration
+				---@type table<string, string|vim.NIL>
+				import_as = {
+					-- These are the default values. Here for demonstration.
+					-- np = "numpy",
+					-- pd = "pandas",
+				},
 
-            -- Only one of these is needed.
-            "nvim-telescope/telescope.nvim", -- optional
-            -- "ibhagwan/fzf-lua",      -- optional
-            -- "echasnovski/mini.pick", -- optional
-            -- "folke/snacks.nvim",     -- optional
-        },
-        config = function()
-            vim.keymap.set("n", "<leader>g", ":Neogit<CR>")
-        end
-    }
+				---@type table<string, string|vim.NIL>
+				import_from = {
+					-- tqdm = vim.NIL,
+					-- tqdm = "tqdm",
+				},
+
+				---@type table<string, string[]|vim.NIL>
+				statement_after_imports = {
+					-- logger = { "import my_custom_logger", "", "logger = my_custom_logger.get_logger()" },
+				},
+			},
+
+			---Return nil to indicate no match is found and continue with the default lookup
+			---Return a table to stop the lookup and use the returned table as the result
+			---Return an empty table to stop the lookup. This is useful when you want to add to wherever you need to.
+			---@type fun(winnr: integer, word: string, ts_node: TSNode?): string[]?
+			custom_function = function(winnr, word, ts_node)
+				-- if vim.endswith(word, "_DIR") then
+				--   return { "from my_module import " .. word }
+				-- end
+			end,
+		},
+	},
+	{
+		"rmagatti/auto-session",
+		lazy = false,
+
+		---enables autocomplete for opts
+		---@module "auto-session"
+		---@diagnostic disable-next-line: undefined-doc-name
+		---@type AutoSession.Config
+		opts = {
+			suppressed_dirs = { "~/", "~/Projects", "~/Downloads", "/" },
+			-- log_level = "debug",
+		},
+	},
+	-- {
+	--     "luk400/vim-jukit",
+	--     config = function()
+	--         vim.g._jukit_python_os_cmd = 'python';
+	--     end,
+	--     -- ft = {"py", "ipynb"},
+	-- },
+	{
+		"folke/trouble.nvim",
+		opts = {}, -- for default options, refer to the configuration section for custom setup.
+		cmd = "Trouble",
+		keys = {
+			{
+				"<leader>xx",
+				"<cmd>Trouble diagnostics toggle<cr>",
+				desc = "Diagnostics (Trouble)",
+			},
+			{
+				"<leader>xX",
+				"<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
+				desc = "Buffer Diagnostics (Trouble)",
+			},
+			{
+				"<leader>cs",
+				"<cmd>Trouble symbols toggle focus=false<cr>",
+				desc = "Symbols (Trouble)",
+			},
+			{
+				"<leader>cl",
+				"<cmd>Trouble lsp toggle focus=false win.position=right<cr>",
+				desc = "LSP Definitions / references / ... (Trouble)",
+			},
+			{
+				"<leader>xL",
+				"<cmd>Trouble loclist toggle<cr>",
+				desc = "Location List (Trouble)",
+			},
+			{
+				"<leader>xQ",
+				"<cmd>Trouble qflist toggle<cr>",
+				desc = "Quickfix List (Trouble)",
+			},
+		},
+	},
+	-- {
+	-- 	"3rd/image.nvim",
+	-- 	build = false, -- so that it doesn't build the rock https://github.com/3rd/image.nvim/issues/91#issuecomment-2453430239
+	-- 	opts = {
+	-- 		processor = "magick_cli",
+	-- 	},
+	-- 	config = function()
+	-- 		require("image").setup({
+	-- 			backend = "kitty", -- or "ueberzug" or "sixel"
+	-- 			processor = "magick_cli", -- or "magick_rock"
+	-- 			integrations = {
+	-- 				markdown = {
+	-- 					enabled = true,
+	-- 					clear_in_insert_mode = false,
+	-- 					download_remote_images = true,
+	-- 					only_render_image_at_cursor = false,
+	-- 					only_render_image_at_cursor_mode = "popup", -- or "inline"
+	-- 					floating_windows = false, -- if true, images will be rendered in floating markdown windows
+	-- 					filetypes = { "markdown", "vimwiki" }, -- markdown extensions (ie. quarto) can go here
+	-- 				},
+	-- 				neorg = {
+	-- 					enabled = true,
+	-- 					filetypes = { "norg" },
+	-- 				},
+	-- 				typst = {
+	-- 					enabled = true,
+	-- 					filetypes = { "typst" },
+	-- 				},
+	-- 				html = {
+	-- 					enabled = false,
+	-- 				},
+	-- 				css = {
+	-- 					enabled = false,
+	-- 				},
+	-- 			},
+	-- 			-- some of these options were tweaked to better fit molten.nvim
+	-- 			max_width = 100,              -- tweak to preference
+	-- 			max_height = 12,              -- ^
+	-- 			max_height_window_percentage = math.huge, -- this is necessary for a good experience
+	-- 			max_width_window_percentage = math.huge,
+	-- 			window_overlap_clear_enabled = true,
+	-- 			scale_factor = 1.0,
+	-- 			window_overlap_clear_ft_ignore = {
+	-- 				"cmp_menu",
+	-- 				"cmp_docs",
+	-- 				"snacks_notif",
+	-- 				"scrollview",
+	-- 				"scrollview_sign",
+	-- 			},
+	-- 			editor_only_render_when_focused = false,                                -- auto show/hide images when the editor gains/looses focus
+	-- 			tmux_show_only_in_active_window = false,                                -- auto show/hide images in the correct Tmux window (needs visual-activity off)
+	-- 			hijack_file_patterns = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.avif" }, -- render image files as images when opened
+	-- 		})
+	-- 	end,
+	-- },
+	--
+	-- {
+	-- 	"quarto-dev/quarto-nvim",
+	--
+	-- 	dependencies = {
+	-- 		"jmbuhr/otter.nvim",
+	-- 		"nvim-treesitter/nvim-treesitter",
+	-- 	},
+	-- 	ft = { "quarto", "markdown" },
+	-- 	config = function()
+	-- 		local quarto = require("quarto")
+	-- 		quarto.setup({
+	-- 			lspFeatures = {
+	-- 				-- NOTE: put whatever languages you want here:
+	-- 				languages = { "r", "python", "rust" },
+	-- 				chunks = "all",
+	-- 				diagnostics = {
+	-- 					enabled = true,
+	-- 					triggers = { "BufWritePost" },
+	-- 				},
+	-- 				completion = {
+	-- 					enabled = true,
+	-- 				},
+	-- 			},
+	-- 			keymap = {
+	-- 				-- NOTE: setup your own keymaps:
+	-- 				hover = "H",
+	-- 				definition = "gd",
+	-- 				rename = "<leader>rn",
+	-- 				references = "gr",
+	-- 				format = "<leader>gf",
+	-- 			},
+	-- 			codeRunner = {
+	-- 				enabled = true,
+	-- 				default_method = "molten",
+	-- 			},
+	-- 		})
+	--
+	-- 		local runner = require("quarto.runner")
+	-- 		vim.keymap.set("n", "<localleader>rc", runner.run_cell, { desc = "run cell", silent = true })
+	-- 		vim.keymap.set("n", "<localleader>ra", runner.run_above, { desc = "run cell and above", silent = true })
+	-- 		vim.keymap.set("n", "<localleader>rA", runner.run_all, { desc = "run all cells", silent = true })
+	-- 		vim.keymap.set("n", "<localleader>rl", runner.run_line, { desc = "run line", silent = true })
+	-- 		vim.keymap.set("v", "<localleader>r", runner.run_range, { desc = "run visual range", silent = true })
+	-- 		vim.keymap.set("n", "<localleader>RA", function()
+	-- 			runner.run_all(true)
+	-- 		end, { desc = "run all cells of all languages", silent = true })
+	-- 	end,
+	-- },
+	-- {
+	-- 	"GCBallesteros/jupytext.nvim",
+	-- 	config = function()
+	-- 		require("jupytext").setup({
+	-- 			style = "markdown",
+	-- 			output_extension = "md",
+	-- 			force_ft = "markdown",
+	-- 		})
+	-- 	end,
+	-- 	-- Depending on your nvim distro or config you may need to make the loading not lazy
+	-- 	-- lazy=false,
+	-- },
+	-- {
+	-- 	"benlubas/molten-nvim",
+	-- 	version = "^1.0.0", -- use version <2.0.0 to avoid breaking changes
+	-- 	build = ":UpdateRemotePlugins",
+	-- 	init = function()
+	-- 		-- this is an example, not a default. Please see the readme for more configuration options
+	-- 		vim.g.molten_output_win_max_height = 12
+	-- 		-- activate the following line to change neovim's python env, but be careful that this env include ALL necessary packages, even those required by other neovim plugins!
+	-- 		-- vim.g.python3_host_prog = vim.fn.expand("C:\\Users\\lpaal\\miniconda3\\envs\\neovim\\python")
+	-- 		vim.keymap.set("n", "<localleader>ip", function()
+	-- 			local venv = os.getenv("VIRTUAL_ENV") or os.getenv("CONDA_PREFIX")
+	-- 			print(venv)
+	--
+	-- 			if venv ~= nil then
+	-- 				-- in the form of /home/benlubas/.virtualenvs/VENV_NAME
+	-- 				venv = string.match(venv, "/.+/(.+)")
+	-- 				vim.cmd(("MoltenInit %s"):format(venv))
+	-- 			else
+	-- 				vim.cmd("MoltenInit python3")
+	-- 			end
+	-- 		end, { desc = "Initialize Molten for python3", silent = true })
+	--
+	-- 		vim.keymap.set("n", "<localleader>mi", ":MoltenInit<CR>", { silent = true, desc = "Initialize the plugin" })
+	-- 		vim.keymap.set(
+	-- 			"n",
+	-- 			"<localleader>e",
+	-- 			":MoltenEvaluateOperator<CR>",
+	-- 			{ silent = true, desc = "run operator selection" }
+	-- 		)
+	-- 		vim.keymap.set("n", "<localleader>rl", ":MoltenEvaluateLine<CR>", { silent = true, desc = "evaluate line" })
+	-- 		vim.keymap.set(
+	-- 			"n",
+	-- 			"<localleader>rr",
+	-- 			":MoltenReevaluateCell<CR>",
+	-- 			{ silent = true, desc = "re-evaluate cell" }
+	-- 		)
+	-- 		vim.keymap.set(
+	-- 			"v",
+	-- 			"<localleader>r",
+	-- 			":<C-u>MoltenEvaluateVisual<CR>gv",
+	-- 			{ silent = true, desc = "evaluate visual selection" }
+	-- 		)
+	-- 	end,
+	-- 	config = function()
+	-- 		-- for molten use with notebooks
+	-- 		-- see https://github.com/benlubas/molten-nvim/blob/main/docs/Notebook-Setup.md
+	--
+	-- 		vim.g.molten_auto_open_output = true
+	--
+	-- 		-- this guide will be using image.nvim
+	-- 		-- Don't forget to setup and install the plugin if you want to view image outputs
+	-- 		vim.g.molten_image_provider = "image.nvim"
+	--
+	-- 		-- optional, I like wrapping. works for virt text and the output window
+	-- 		vim.g.molten_wrap_output = true
+	--
+	-- 		-- Output as virtual text. Allows outputs to always be shown, works with images, but can
+	-- 		-- be buggy with longer images
+	-- 		vim.g.molten_virt_text_output = true
+	--
+	-- 		-- this will make it so the output shows up below the \`\`\` cell delimiter
+	-- 		vim.g.molten_virt_lines_off_by_1 = true
+	--
+	-- 		vim.keymap.set(
+	-- 			"n",
+	-- 			"<localleader>rr",
+	-- 			":MoltenReevaluateCell<CR>",
+	-- 			{ desc = "re-eval cell", silent = true }
+	-- 		)
+	-- 		vim.keymap.set(
+	-- 			"v",
+	-- 			"<localleader>r",
+	-- 			":<C-u>MoltenEvaluateVisual<CR>gv",
+	-- 			{ desc = "execute visual selection", silent = true }
+	-- 		)
+	-- 		vim.keymap.set(
+	-- 			"n",
+	-- 			"<localleader>oh",
+	-- 			":MoltenHideOutput<CR>",
+	-- 			{ desc = "close output window", silent = true }
+	-- 		)
+	-- 		vim.keymap.set("n", "<localleader>md", ":MoltenDelete<CR>", { desc = "delete Molten cell", silent = true })
+	--
+	-- 		-- if you work with html outputs:
+	-- 		vim.keymap.set(
+	-- 			"n",
+	-- 			"<localleader>mx",
+	-- 			":MoltenOpenInBrowser<CR>",
+	-- 			{ desc = "open output in browser", silent = true }
+	-- 		)
+	-- 	end,
+	-- },
+	-- {
+	--     "lervag/vimtex",
+	--     lazy = false, -- we don't want to lazy load VimTeX
+	--     -- tag = "v2.15", -- uncomment to pin to a specific release
+	--     init = function()
+	--         -- VimTeX configuration goes here, e.g.
+	--
+	--         -- vim.g.vimtex_view_general_viewer = 'okular'
+	--         -- vim.g.vimtex_view_general_options = '--unique file:@pdf#src:@line@tex'
+	--
+	--         vim.g.vimtex_view_general_viewer = 'sumatraPDF'
+	--         vim.g.vimtex_view_general_options = '-reuse-instance @pdf'
+	--
+	--         -- vim.g.vimtex_compiler_method = "latexpdf"
+	--         -- spellcheck
+	--
+	--         -- vim.keymap.set("n", "<leader>lr", function()
+	--         --     local cwd = vim.fn.getcwd()
+	--         --     vim.cmd('!start cmd.exe /K "cd ' .. cwd .. ' && pdflatex Thesis.tex"')
+	--         -- end, { silent = true })
+	--
+	--
+	--         vim.api.nvim_create_user_command('RunPdfLatex', function()
+	--             local file = vim.fn.expand('%')
+	--             if file == '' then
+	--                 print("No file to compile!")
+	--                 return
+	--             end
+	--             print("Running pdflatex on " .. file)
+	--             vim.fn.jobstart({ 'pdflatex', file }, {
+	--                 stdout_buffered = true,
+	--                 stderr_buffered = true,
+	--                 on_stdout = function(_, data)
+	--                     if data then
+	--                         print(table.concat(data, '\n'))
+	--                     end
+	--                 end,
+	--                 on_stderr = function(_, data)
+	--                     if data then
+	--                         vim.notify(table.concat(data, '\n'), vim.log.levels.ERROR)
+	--                     end
+	--                 end,
+	--                 on_exit = function(_, code)
+	--                     if code == 0 then
+	--                         print("pdflatex compilation succeeded.")
+	--                     else
+	--                         print("pdflatex compilation failed.")
+	--                     end
+	--                 end,
+	--             })
+	--         end, { desc = "Run pdflatex on the current file" })
+	--
+	--         -- shortcut to rerun pdflatex on current file
+	--         vim.api.nvim_set_keymap('n', '<localleader>lr', ':RunPdfLatex<CR>', { noremap = true, silent = true })
+	--
+	--
+	--         vim.api.nvim_create_user_command("CheckThesis", function()
+	--             local cmd =
+	--             [[java -jar "C:\Program Files\textidote\textidote.jar" --output html Thesis.tex > "C:\Users\lpaal\Downloads\report.html" & cmd /c start "" "C:\Users\lpaal\Downloads\report.html"]]
+	--             vim.fn.system(cmd)
+	--             print("Textidote check complete! Report opened.")
+	--         end, {})
+	--
+	--         vim.api.nvim_set_keymap('n', '<localleader>lg', ':CheckThesis<CR>', { noremap = true, silent = true })
+	--
+	--         --
+	--         -- vim.g.vimtex_view_general_options_latexmk = '-reuse-instance'
+	--         -- vim.g.vimtex_view_method = "sumatrapdf"
+	--     end
+	-- },
+	{
+		"norcalli/nvim-colorizer.lua",
+		-- preview hex color values
+		config = function()
+			require("colorizer").setup()
+		end,
+	},
+	{
+		-- multiline cursors
+		"mg979/vim-visual-multi",
+	},
+	-- {
+	--     'stevearc/oil.nvim',
+	--     ---@module 'oil'
+	--     ---@type oil.SetupOpts
+	--     opts = {},
+	--     -- Optional dependencies
+	--     dependencies = { { "echasnovski/mini.icons", opts = {} } },
+	--     -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
+	--     -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
+	--     lazy = false,
+	--     config = function()
+	--         require("oil").setup()
+	--     end,
+	-- }
+	{
+		"kiyoon/treesitter-indent-object.nvim",
+		keys = {
+			{
+				"ai",
+				function()
+					require("treesitter_indent_object.textobj").select_indent_outer()
+				end,
+				mode = { "x", "o" },
+				desc = "Select context-aware indent (outer)",
+			},
+			{
+				"aI",
+				function()
+					require("treesitter_indent_object.textobj").select_indent_outer(true)
+				end,
+				mode = { "x", "o" },
+				desc = "Select context-aware indent (outer, line-wise)",
+			},
+			{
+				"ii",
+				function()
+					require("treesitter_indent_object.textobj").select_indent_inner()
+				end,
+				mode = { "x", "o" },
+				desc = "Select context-aware indent (inner, partial range)",
+			},
+			{
+				"iI",
+				function()
+					require("treesitter_indent_object.textobj").select_indent_inner(true, "V")
+				end,
+				mode = { "x", "o" },
+				desc = "Select context-aware indent (inner, entire range) in line-wise visual mode",
+			},
+		},
+	},
+	-- {
+	--     "valentjn/ltex-ls",
+	--     config = function()
+	--         local path = vim.fn.stdpath("config") .. "/spell/en.utf-8.add"
+	--         local words = {}
+	--
+	--         for word in io.open(path, "r"):lines() do
+	--             table.insert(words, word)
+	--         end
+	--
+	--         require 'lspconfig'.ltex.setup {
+	--             settings = {
+	--                 ltex = {
+	--                     language = "en",                    -- Set the language (e.g., "en" for English)
+	--                     diagnosticSeverity = "information", -- Adjust severity levels
+	--                     --  "C:\\Users\\lpaal\\AppData\\Local\\nvim\\spell\\en.utf-8.add"llk
+	--                     dictionary = {
+	--                         en = words,
+	--                     },
+	--                 }
+	--             }
+	--         }
+	--     end
+	-- },
+	{
+		"nvim-treesitter/nvim-treesitter-context",
+		config = function()
+			require("treesitter-context").setup({
+				enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
+				multiwindow = false, -- Enable multiwindow support.
+				max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
+				min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
+				line_numbers = true,
+				multiline_threshold = 1, -- Maximum number of lines to show for a single context
+				trim_scope = "outer", -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
+				mode = "cursor", -- Line used to calculate context. Choices: 'cursor', 'topline'
+				-- Separator between context and content. Should be a single character string, like '-'.
+				-- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
+				-- separator = nil,
+				separator = "-",
+				zindex = 20, -- The Z-index of the context window
+				on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
+			})
+		end,
+	},
+	{
+		"NeogitOrg/neogit",
+		dependencies = {
+			"nvim-lua/plenary.nvim", -- required
+			"sindrets/diffview.nvim", -- optional - Diff integration
+
+			-- Only one of these is needed.
+			"nvim-telescope/telescope.nvim", -- optional
+			-- "ibhagwan/fzf-lua",      -- optional
+			-- "echasnovski/mini.pick", -- optional
+			-- "folke/snacks.nvim",     -- optional
+		},
+		config = function()
+			vim.keymap.set("n", "<leader>g", ":Neogit<CR>")
+		end,
+	},
 }

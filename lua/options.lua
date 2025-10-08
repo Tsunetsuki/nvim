@@ -25,7 +25,6 @@ vim.opt.hlsearch = false
 vim.opt.incsearch = true
 vim.opt.swapfile = false
 
-
 vim.g.mapleader = " "
 
 -- vim.opt.foldmethod = "expr"
@@ -33,57 +32,58 @@ vim.g.mapleader = " "
 vim.opt.foldmethod = "indent"
 vim.opt.foldenable = false
 
-
 local autocmd = vim.api.nvim_create_autocmd
 
 autocmd("FileType", {
-  pattern = { "tex" },
-  callback = function()
-    vim.opt_local.wrap = true
-    vim.cmd("setlocal spell spelllang=en_us")
-    vim.g.vimtex_quickfix_ignore_filters = {
-      'Underfull',
-      'Overfull',
-    }
-  end,
+	pattern = { "tex" },
+	callback = function()
+		vim.opt_local.wrap = true
+		vim.cmd("setlocal spell spelllang=en_us")
+		vim.g.vimtex_quickfix_ignore_filters = {
+			"Underfull",
+			"Overfull",
+		}
+	end,
 })
 
 autocmd("FileType", {
-  pattern = "text", -- applies to txt files
-  callback = function()
-    vim.opt_local.wrap = true
-  end,
+	pattern = "text", -- applies to txt files
+	callback = function()
+		vim.opt_local.wrap = true
+	end,
 })
 
 autocmd("FileType", {
-  pattern = "py",
-  callback = function()
-    vim.api.nvim_set_keymap('n', '<leader>r', [[:lua ExecutePythonFile()<CR>]],
-      { noremap = true, silent = true })
+	pattern = "py",
+	callback = function()
+		vim.api.nvim_set_keymap("n", "<leader>r", [[:lua ExecutePythonFile()<CR>]], { noremap = true, silent = true })
 
-    function ExecuteCurrentPythonFile()
-      local file_path = vim.fn.expand('%:p')
-      local dir_path = vim.fn.expand('%:p:h')
+		function ExecuteCurrentPythonFile()
+			local file_path = vim.fn.expand("%:p")
+			local dir_path = vim.fn.expand("%:p:h")
 
-      -- Open a terminal and execute the file
-      vim.cmd('split | terminal')
-      vim.cmd(string.format('call jobsend(&channel, "cd %s && set PYTHONPATH=. && python %s\n")',
-        dir_path, file_path))
-    end
-  end,
+			-- Open a terminal and execute the file
+			vim.cmd("split | terminal")
+			vim.cmd(
+				string.format('call jobsend(&channel, "cd %s && set PYTHONPATH=. && python %s\n")', dir_path, file_path)
+			)
+		end
+	end,
 })
-
 
 autocmd("VimEnter", {
-  callback = function()
-    --NVIM_ENTER=1
-    vim.cmd([[call chansend(v:stderr, "\033]1337;SetUserVar=NVIM_ENTER=MQ==\007")]])
-  end,
+	callback = function()
+		--NVIM_ENTER=1
+		vim.cmd([[call chansend(v:stderr, "\033]1337;SetUserVar=NVIM_ENTER=MQ==\007")]])
+	end,
 })
 
 autocmd("VimLeavePre", {
-  callback = function()
-    --NVIM_ENTER=0
-    vim.cmd([[call chansend(v:stderr, "\033]1337;SetUserVar=NVIM_ENTER=MA==\007")]])
-  end,
+	callback = function()
+		--NVIM_ENTER=0
+		vim.cmd([[call chansend(v:stderr, "\033]1337;SetUserVar=NVIM_ENTER=MA==\007")]])
+	end,
 })
+
+-- set neovim's python venv (for molten's python deps)
+vim.g.python3_host_prog = vim.fn.expand("~/.virtualenvs/neovim/bin/python3")
