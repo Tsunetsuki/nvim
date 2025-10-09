@@ -21,7 +21,6 @@ if vim.g.vscode then
 	}
 end
 
-
 return {
 	{
 		"askfiy/visual_studio_code",
@@ -192,74 +191,56 @@ return {
 		end,
 	},
 	{
-		-- "williamboman/mason-lspconfig.nvim",
-		-- dependencies = { "mason.nvim", "neovim/nvim-lspconfig" },
-		-- config = function()
-		-- 	require("mason").setup()
-		--
-		-- 	require("mason-lspconfig").setup({
-		-- 		ensure_installed = { "clangd", "jsonls", "lua_ls", "pyright", "ts_ls" },
-		-- 		automatic_installation = true,
-		--
-		-- 		-- handlers = {
-		-- 		-- 	function(server_name)
-		-- 		-- 		if server_name == "ltex" then
-		-- 		-- 			local path = vim.fn.stdpath("config") .. "/spell/en.utf-8.add"
-		-- 		-- 			local words = {}
-		-- 		-- 			for word in io.open(path, "r"):lines() do
-		-- 		-- 				table.insert(words, word)
-		-- 		-- 			end
-		-- 		--
-		-- 		-- 			require("lspconfig").ltex.setup({
-		-- 		-- 				settings = {
-		-- 		-- 					ltex = {
-		-- 		-- 						disabledRules = {
-		-- 		-- 							["en-US"] = {
-		-- 		-- 								"COMMA_PARENTHESIS_WHITESPACE",
-		-- 		-- 								"SMALL_NUMBER_OF",
-		-- 		-- 								"LARGE_NUMBER_OF",
-		-- 		-- 								"MORFOLOGIK_RULE_EN_US",
-		-- 		-- 								"WHETHER",
-		-- 		-- 								"Y_ALL",
-		-- 		-- 							},
-		-- 		-- 						},
-		-- 		-- 						dictionary = {
-		-- 		-- 							en = words,
-		-- 		-- 						},
-		-- 		-- 					},
-		-- 		-- 				},
-		-- 		-- 			})
-		-- 		-- 		else
-		-- 		-- 			require("lspconfig")[server_name].setup({})
-		-- 		-- 		end
-		-- 		-- 	end,
-		-- 		-- },
-		-- 	})
-		-- end,
+		"williamboman/mason-lspconfig.nvim",
+		dependencies = { "mason.nvim", "neovim/nvim-lspconfig" },
+		config = function()
+			require("mason").setup()
+
+			require("mason-lspconfig").setup({
+				ensure_installed = { "clangd", "jsonls", "lua_ls", "pyright", "ts_ls" },
+				automatic_installation = true,
+
+				-- handlers = {
+				-- 	function(server_name)
+				-- 		if server_name == "ltex" then
+				-- 			local path = vim.fn.stdpath("config") .. "/spell/en.utf-8.add"
+				-- 			local words = {}
+				-- 			for word in io.open(path, "r"):lines() do
+				-- 				table.insert(words, word)
+				-- 			end
+				--
+				-- 			require("lspconfig").ltex.setup({
+				-- 				settings = {
+				-- 					ltex = {
+				-- 						disabledRules = {
+				-- 							["en-US"] = {
+				-- 								"COMMA_PARENTHESIS_WHITESPACE",
+				-- 								"SMALL_NUMBER_OF",
+				-- 								"LARGE_NUMBER_OF",
+				-- 								"MORFOLOGIK_RULE_EN_US",
+				-- 								"WHETHER",
+				-- 								"Y_ALL",
+				-- 							},
+				-- 						},
+				-- 						dictionary = {
+				-- 							en = words,
+				-- 						},
+				-- 					},
+				-- 				},
+				-- 			})
+				-- 		else
+				-- 			require("lspconfig")[server_name].setup({})
+				-- 		end
+				-- 	end,
+				-- },
+			})
+		end,
 	},
 	{
 		"nvimtools/none-ls.nvim",
 		dependencies = {
 			"nvimtools/none-ls-extras.nvim",
 		},
-		-- config = function()
-		-- 	local null_ls = require("null-ls")
-		-- 	null_ls.setup({
-		-- 		sources = {
-		-- 			-- require("none-ls.diagnostics.eslint"), -- requires none-ls-extras.nvim
-		-- 			-- null_ls.builtins.formatting.prettier,
-		-- 			-- -- null_ls.builtins.formatting.prettierd,
-		-- 			null_ls.builtins.formatting.black,
-		-- 			-- null_ls.builtins.formatting.isort, -- for Python imports
-		-- 			-- null_ls.builtins.formatting.shfmt,
-		-- 			-- null_ls.builtins.formatting.lua_ls
-		-- 			-- null_ls.builtins.formatting.stylua,
-		--
-		-- 			-- null_ls.builtins.diagnostics.shellcheck,
-		-- 			-- null_ls.builtins.code_actions.shellcheck,
-		-- 		},
-		-- 	})
-		-- end,
 	},
 
 	{
@@ -275,7 +256,7 @@ return {
 			require("mason").setup()
 
 			require("mason-null-ls").setup({
-				ensure_installed = {"black"},
+				ensure_installed = { "black" },
 				automatic_installation = true,
 				-- automatic_setup = true,
 				handlers = {},
@@ -283,7 +264,7 @@ return {
 
 			local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 
-			require("null-ls").setup({require("null-ls").builtins.formatting.black})
+			require("null-ls").setup({ require("null-ls").builtins.formatting.black })
 
 			local null_ls = require("null-ls")
 			null_ls.setup({
@@ -436,7 +417,7 @@ return {
 	},
 	{
 		-- venv-selector is disabled because it breaks none-ls
-		
+
 		-- "linux-cultist/venv-selector.nvim",
 		--   dependencies = {
 		-- 	"neovim/nvim-lspconfig",
@@ -446,7 +427,7 @@ return {
 		--   keys = {
 		-- 	{ "<leader>v", "<cmd>VenvSelect<cr>" }, -- Open picker on keymap
 		--   },
-		--   opts = { 
+		--   opts = {
 		-- 	search = {},
 		-- 	options = {
 		-- 		notify_user_on_venv_activation = true, -- doesnt work anymore
@@ -459,11 +440,11 @@ return {
 		-- 		vim.notify("Reloaded null-ls with new venv", vim.log.levels.INFO)
 		-- 	  end,
 		--
-  -- require_lsp_activation = true
-		-- 	} 
+		-- require_lsp_activation = true
+		-- 	}
 		--   },
-		--   
-		-- 	
+		--
+		--
 		--
 		--
 		-- -- config = function()
