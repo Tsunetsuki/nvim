@@ -27,10 +27,10 @@ vim.keymap.set("n", "<F8>", function() vim.diagnostic.goto_next({ focusable = tr
 vim.keymap.set("n", "<F7>", function() vim.diagnostic.goto_prev({ focusable = true }) end)
 
 -- jump between windows
-vim.keymap.set("n", "<C-h>", "<C-w>h")
-vim.keymap.set("n", "<C-l>", "<C-w>l")
-vim.keymap.set("n", "<C-j>", "<C-w>j")
-vim.keymap.set("n", "<C-k>", "<C-w>k")
+-- vim.keymap.set("n", "<C-h>", "<C-w>h")
+-- vim.keymap.set("n", "<C-l>", "<C-w>l")
+-- vim.keymap.set("n", "<C-j>", "<C-w>j")
+-- vim.keymap.set("n", "<C-k>", "<C-w>k")
 
 vim.keymap.set("n", "_", "<S-/>") -- search for QWERTZ keyboard
 
