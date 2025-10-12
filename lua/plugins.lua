@@ -264,8 +264,6 @@ return {
 
 			local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 
-			require("null-ls").setup({ require("null-ls").builtins.formatting.black })
-
 			local null_ls = require("null-ls")
 			null_ls.setup({
 				sources = {
