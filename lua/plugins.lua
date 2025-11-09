@@ -651,6 +651,9 @@ return {
 			suppressed_dirs = { "~/", "~/Projects", "~/Downloads", "/" },
 			-- log_level = "debug",
 		},
+		config = function()
+			require("auto-session").setup({})
+		end,
 	},
 	{
 		"folke/trouble.nvim",
