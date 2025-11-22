@@ -189,6 +189,16 @@ return {
 						opts
 					)
 					vim.keymap.set("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
+					vim.keymap.set("n", "<F4>", function()
+						vim.lsp.buf.code_action({
+							apply = true,
+							context = {
+								-- only = { "source.organizeImports", "source.removeUnusedImports" },
+								only = { "source.removeUnusedImports" },
+								diagnostics = {},
+							},
+						})
+					end, opts)
 				end,
 			})
 		end,
@@ -321,7 +331,7 @@ return {
 			require("telescope").setup({
 				defaults = {
 					file_ignore_patterns = {
-						-- "%.ipynb",
+						"%.ipynb",
 						"%.pt",
 						"%.lock",
 						"%.mp3",
@@ -330,6 +340,7 @@ return {
 						"%.jpeg",
 						"%.swp",
 						"venv/.*",
+						".idea/.*",
 					},
 				},
 			})
@@ -704,19 +715,20 @@ return {
 		"mg979/vim-visual-multi",
 	},
 	-- {
-	--     'stevearc/oil.nvim',
-	--     ---@module 'oil'
-	--     ---@type oil.SetupOpts
-	--     opts = {},
-	--     -- Optional dependencies
-	--     dependencies = { { "echasnovski/mini.icons", opts = {} } },
-	--     -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
-	--     -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
-	--     lazy = false,
-	--     config = function()
-	--         require("oil").setup()
-	--     end,
-	-- }
+	-- 	"stevearc/oil.nvim",
+	-- 	---@module 'oil'
+	-- 	---@type oil.SetupOpts
+	-- 	opts = {},
+	-- 	-- Optional dependencies
+	-- 	dependencies = { { "nvim-mini/mini.icons", opts = {} } },
+	-- 	-- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
+	-- 	-- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
+	-- 	lazy = false,
+	-- 	config = function()
+	-- 		require("oil").setup()
+	-- 		vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+	-- 	end,
+	-- },
 	-- {
 	-- 	"kiyoon/treesitter-indent-object.nvim",
 	-- 	keys = {
@@ -832,5 +844,43 @@ return {
 			-- vim.keymap.set("n", "<C-\\>", nvim_tmux_nav.NvimTmuxNavigateLastActive)
 			-- vim.keymap.set("n", "<C-Space>", nvim_tmux_nav.NvimTmuxNavigateNext)
 		end,
+	},
+	{
+		"stevearc/quicker.nvim",
+		ft = "qf",
+		---@module "quicker"
+		---@type quicker.SetupOptions
+		opts = {},
+	},
+	{
+		"sphamba/smear-cursor.nvim",
+
+		opts = {
+			-- Smear cursor when switching buffers or windows.
+			smear_between_buffers = true,
+
+			-- Smear cursor when moving within line or to neighbor lines.
+			-- Use `min_horizontal_distance_smear` and `min_vertical_distance_smear` for finer control
+			smear_between_neighbor_lines = false,
+
+			-- Draw the smear in buffer space instead of screen space when scrolling
+			scroll_buffer_space = false,
+
+			-- Set to `true` if your font supports legacy computing symbols (block unicode symbols).
+			-- Smears and particles will look a lot less blocky.
+			legacy_computing_symbols_support = false,
+
+			-- Smear cursor in insert mode.
+			-- See also `vertical_bar_cursor_insert_mode` and `distance_stop_animating_vertical_bar`.
+			smear_insert_mode = true,
+
+			stiffness = 0.8, -- 0.6      [0, 1]
+			trailing_stiffness = 0.6, -- 0.45     [0, 1]
+			stiffness_insert_mode = 0.7, -- 0.5      [0, 1]
+			trailing_stiffness_insert_mode = 0.7, -- 0.5      [0, 1]
+			damping = 0.95, -- 0.85     [0, 1]
+			damping_insert_mode = 0.95, -- 0.9      [0, 1]
+			distance_stop_animating = 0.5, -- 0.1      > 0
+		},
 	},
 }
